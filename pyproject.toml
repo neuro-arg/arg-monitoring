@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[project]
+name = "arg-monitoring"
+version = "0.69.420"
+description = "Monitors the ARG and stuff"
+dependencies = [
+    "pytube >= 15.0.0",
+    "requests >= 2.31.0",
+    "dataclasses-json >= 0.6.3",
+    "beautifulsoup4 >= 4.12.2",
+    "feedgen >= 1.0.0",
+    "pylint",
+    "mypy",
+    "flake8"
+]
