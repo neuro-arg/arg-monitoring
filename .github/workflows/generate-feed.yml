@@ -38,7 +38,7 @@ jobs:
         run: |
           git config --local user.email "worker@github.com"
           git config --local user.name "Feed Worker"
-          git checkout -B publish
-          git add -f atom.xml
-          git commit -m "Update atom.xml"
+          git checkout --orphan publish
+          git add -f atom.xml cache.json
+          git commit -m "Update atom.xml and cache.json"
           git push -f origin publish
