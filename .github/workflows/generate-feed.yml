@@ -1,0 +1,43 @@
+name: Generate feed
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install .
+
+      - name: Cache pickle and json files (restore if available)
+        uses: actions/cache@v2
+        with:
+          path: |
+            atom.pickle
+            cache.json
+          key: ${{ runner.os }}-caches
+
+      - name: Run main.py
+        run: |
+          python src/main.py
+
+      - name: Push atom.xml to another branch
+        if: ${{ !github.event.act }}
+        run: |
+          git config --local user.email "worker@github.com"
+          git config --local user.name "Feed Worker"
+          git checkout -B publish
+          git add -f atom.xml
+          git commit -m "Update atom.xml"
+          git push -f origin publish
