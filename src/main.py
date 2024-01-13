@@ -96,18 +96,19 @@ else:
     with open('cache.json', 'w', encoding='ascii') as f:
         f.write(current_state.to_json())
 
-# only generate an update to the atom feed if there are any changes
+# only update the atom feed if there are any changes
+# still create the atom.xml file though, so we don't break workflow
+if not os.path.exists('atom.pickle'):
+    fg = FeedGenerator()
+
+    fg.id('ARG feed')
+    fg.title('ARG feed')
+    fg.author({'name': 'clueless author'})
+else:
+    with open('atom.pickle', 'rb') as f:  # type: ignore
+        fg = pickle.load(f)  # type: ignore
+
 if len(feed_log) > 0:
-    if not os.path.exists('atom.pickle'):
-        fg = FeedGenerator()
-
-        fg.id('ARG feed')
-        fg.title('ARG feed')
-        fg.author({'name': 'clueless author'})
-    else:
-        with open('atom.pickle', 'rb') as f:  # type: ignore
-            fg = pickle.load(f)  # type: ignore
-
     fe = fg.add_entry()
     fe.id(str(uuid4()))
     fe.title('ARG feed update - Difference Detected')
@@ -116,7 +117,7 @@ if len(feed_log) > 0:
         f'Full JSON:\n{current_state.to_json()}\n\n'
         f'Cached JSON:\n{cached_state.to_json()}')
 
-    fg.atom_file('atom.xml')
+fg.atom_file('atom.xml')
 
-    with open('atom.pickle', 'wb') as f:  # type: ignore
-        pickle.dump(fg, f)  # type: ignore
+with open('atom.pickle', 'wb') as f:  # type: ignore
+    pickle.dump(fg, f)  # type: ignore
