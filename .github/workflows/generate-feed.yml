@@ -21,8 +21,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install .
 
-      - name: Cache pickle and json files (restore if available)
-        uses: actions/cache@v2
+      - name: Restore pickle and json files
+        uses: actions/cache/restore@v3
         with:
           path: |
             atom.pickle
@@ -32,6 +32,14 @@ jobs:
       - name: Run main.py
         run: |
           python src/main.py
+
+      - name: Cache pickle and json files
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            atom.pickle
+            cache.json
+          key: ${{ runner.os }}-caches
 
       - name: Push atom.xml to another branch
         if: ${{ !github.event.act }}
