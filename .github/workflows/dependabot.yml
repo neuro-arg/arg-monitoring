@@ -1,0 +1,22 @@
+version: 2
+updates:
+- package-ecosystem: cargo
+  directory: "/web"
+  schedule:
+    interval: daily
+    time: "08:00"
+  open-pull-requests-limit: 10
+
+- package-ecosystem: pip
+  directory: "/feed-generator"
+  schedule:
+    interval: daily
+    time: "08:00"
+  open-pull-requests-limit: 10
+
+- package-ecosystem: npm
+  directory: "/feed-generator/www"
+  schedule:
+    interval: daily
+    time: "08:00"
+  open-pull-requests-limit: 10
