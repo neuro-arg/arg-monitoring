@@ -41,13 +41,16 @@ jobs:
             cache.json
           key: ${{ runner.os }}-caches
 
-      - name: Push atom.xml to another branch
-        if: ${{ !github.event.act }}
+      - name: Add a commit (only if there are changes)
         run: |
           git config --local user.email "worker@github.com"
           git config --local user.name "Feed Worker"
-          git checkout --orphan publish
+          git checkout publish
           git reset
           git add -f atom.xml cache.json
-          git commit -m "Update atom.xml and cache.json"
-          git push -f origin publish
+          git commit -m "Update atom.xml and cache.json" || exit 0
+
+      - name: Push new commit
+        if: ${{ !github.event.act }}
+        run: |
+          git push origin publish
