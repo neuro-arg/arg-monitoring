@@ -39,6 +39,7 @@ class YoutubeSource:
             stream = BytesIO()
             yt = YouTube(self.url)
             yt.streams.get_lowest_resolution().stream_to_buffer(stream)
+            stream.seek(0)
             self.hash = self.__calculate_hash(stream)
             return self.hash
         except:  # pylint: disable=bare-except # noqa: E722
