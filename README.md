@@ -19,7 +19,14 @@ link](https://raw.githubusercontent.com/neuro-arg/arg-monitoring/publish/cache.j
 
 ## Contributing
 
+The repository is split into two parts: `feed-generator` and `web`.
+
+### Feed Generator
+
+The Feed Generator is written in Python.
+
 ``` text
+cd feed-generator/
 pip install -e .
 ```
 
@@ -27,4 +34,32 @@ If you hate red squiggly lines, run this as well:
 
 ``` text
 mypy --install-types
+```
+
+### Web
+
+The Web interface is written both in JavaScript and Rust (because I
+wanted to).
+
+Install pre-requisites:
+
+``` text
+cd web/
+npm install -g wasm-pack
+cd www/
+npm install
+cd -
+```
+
+Build the project:
+
+``` text
+wasm-pack build
+```
+
+To serve the development HTTP server, try:
+
+``` text
+cd www/
+npm start
 ```
