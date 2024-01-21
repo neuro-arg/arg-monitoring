@@ -45,6 +45,14 @@ jobs:
         git reset --hard
         git add -f dist/
         git stash -m "Website files"
+
+    - name: Checkout to publish
+      uses: actions/checkout@v4
+      with:
+        - ref: 'publish'
+
+    - name: Perform more git magic
+      run: |
         git checkout publish
         git rm -r *.js *.html *.wasm web/ || true
         git stash apply

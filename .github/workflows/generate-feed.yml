@@ -41,13 +41,20 @@ jobs:
             cache.json
           key: ${{ runner.os }}-caches
 
-      - name: Add a commit (only if there are changes)
+      - name: Stash cache and atom
         run: |
           git config --local user.email "worker@github.com"
           git config --local user.name "Feed Worker"
           git add -f cache.json atom.xml
           git stash -m "generated changes"
-          git checkout publish
+
+      - name: Checkout to publish
+        uses: actions/checkout@v4
+        with:
+          - ref: 'publish'
+
+      - name: Add a commit (only if there are changes)
+        run: |
           git rm atom.xml cache.json || true
           git stash apply
           git add -f atom.xml cache.json
