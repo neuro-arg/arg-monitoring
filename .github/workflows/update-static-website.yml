@@ -42,6 +42,8 @@ jobs:
 
     - name: Perform enough git magic
       run: |
+        git config --local user.email "worker@github.com"
+        git config --local user.name "Feed Worker"
         git reset --hard
         git add -f dist/
         git stash -m "Website files"
