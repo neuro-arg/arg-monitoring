@@ -51,7 +51,7 @@ jobs:
       - name: Checkout to publish
         uses: actions/checkout@v4
         with:
-          - ref: 'publish'
+          ref: 'publish'
 
       - name: Add a commit (only if there are changes)
         run: |
