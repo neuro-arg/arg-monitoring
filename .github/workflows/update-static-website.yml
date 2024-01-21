@@ -56,11 +56,11 @@ jobs:
     - name: Perform more git magic
       run: |
         git checkout publish
-        git rm -r *.js *.html *.wasm web/ || true
+        git rm -r *.js *.html *.wasm *.css web/ || true
         git stash apply
         mv dist/* .
         git rm -r dist/
-        git add *.js *.html *.wasm
+        git add *.js *.html *.wasm *.css
         git commit -m "Update website" || true
 
     - name: Push changes
