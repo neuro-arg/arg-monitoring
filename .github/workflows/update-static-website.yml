@@ -1,0 +1,58 @@
+name: Update Static Website
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Rust (only required for local GitHub act)
+      if: ${{ github.event.act }} # default act does not have cargo
+      run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        cd web/www
+        npm -g install wasm-pack
+        npm install
+
+    - name: Build
+      run: |
+        . "$HOME/.cargo/env"
+        cd web
+        wasm-pack build
+        cd www
+        npm run build
+
+    - name: Copy out important files
+      run: |
+        cp -r web/www/dist .
+
+    - name: Perform enough git magic
+      run: |
+        git reset --hard
+        git add -f dist/
+        git stash -m "Website files"
+        git checkout publish
+        git rm -r *.js *.html *.wasm web/ || true
+        git stash apply
+        mv dist/* .
+        git rm -r dist/
+        git add *.js *.html *.wasm
+        git commit -m "Update website" || true
+
+    - name: Push changes
+      if: ${{ !github.event.act }}
+      run: |
+        git push origin publish

@@ -45,12 +45,14 @@ jobs:
         run: |
           git config --local user.email "worker@github.com"
           git config --local user.name "Feed Worker"
-          git stash "generated changes"
+          git add -f cache.json atom.xml
+          git stash -m "generated changes"
           git checkout publish
-          git rm atom.xml cache.json
+          git rm atom.xml cache.json || true
           git stash apply
           git add -f atom.xml cache.json
-          git commit -m "Update atom.xml and cache.json" || exit 0
+          git commit -m "Update atom.xml and cache.json" || true
+          git log
 
       - name: Push new commit
         if: ${{ !github.event.act }}
