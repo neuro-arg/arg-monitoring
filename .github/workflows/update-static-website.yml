@@ -49,7 +49,7 @@ jobs:
     - name: Checkout to publish
       uses: actions/checkout@v4
       with:
-        - ref: 'publish'
+        ref: 'publish'
 
     - name: Perform more git magic
       run: |
