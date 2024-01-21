@@ -27,6 +27,7 @@ jobs:
           path: |
             atom.pickle
             cache.json
+          key: will-not-exist
           restore-keys: |
             ${{ runner.os }}-caches-
 
