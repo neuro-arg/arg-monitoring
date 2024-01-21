@@ -27,7 +27,7 @@ jobs:
           path: |
             atom.pickle
             cache.json
-          key: ${{ runner.os }}-caches
+          key: ${{ runner.os }}-caches-${{ hashFiles('cache.json') }}
 
       - name: Run main.py
         run: |
@@ -39,7 +39,7 @@ jobs:
           path: |
             atom.pickle
             cache.json
-          key: ${{ runner.os }}-caches
+          key: ${{ runner.os }}-caches-${{ hashFiles('cache.json') }}
 
       - name: Stash cache and atom
         run: |
