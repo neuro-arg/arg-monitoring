@@ -59,10 +59,10 @@ const updateTable = async () => {
 
   // NOTE: it seems not all browsers have Iterator.prototype,
   // so I use a primitive method
-  let res = false;
+  let res = true;
   for (const val of statusMapping.values()) {
-    if (val) {
-      res = true;
+    if (!val) {
+      res = false;
       break
     }
   }
