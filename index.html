@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Neuro ARG monitoring</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
+    <script src="./bootstrap.js"></script>
+
+    <div>
+      <div class="header">
+        <h1>Neuro ARG monitoring page</h1>
+        <p>Welcome to this very basic webpage that monitors various resources in the Neuro ARG.</p>
+        <p>Choose two dates to compare the resource states.</p>
+        <p>The link is shareable. <a href="#" id="sharing-link">Copy Link</a></p>
+      </div>
+
+      <div class="date-selectors">
+        <div>
+          <label for="from-date">Choose a date:</label>
+          <input type="date" id="from-date" name="from-date" />
+          <button id="from-date-today">Today</button>
+        </div>
+
+        <div>
+          <label for="to-date">Choose another date:</label>
+          <input type="date" id="to-date" name="to-date" />
+          <button id="to-date-today">Today</button>
+        </div>
+      </div>
+
+      <div class="information">
+        <p>Status: <span id="status"></span></p>
+        <p>From Commit: <span id="from-commit"></span></p>
+        <p>To Commit: <span id="to-commit"></span></p>
+      </div>
+
+      <div id="table-parent" class="tabular">
+        <p>Table is loading...</p>
+      </div>
+    </div>
+  </body>
+</html>
