@@ -27,7 +27,8 @@ jobs:
           path: |
             atom.pickle
             cache.json
-          key: ${{ runner.os }}-caches-${{ hashFiles('cache.json') }}
+          restore-keys: |
+            ${{ runner.os }}-caches-
 
       - name: Run main.py
         run: |
