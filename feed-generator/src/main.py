@@ -59,8 +59,8 @@ def if_none_panic(x: Any | None) -> Any:
 
 current_state = ArgState(
     *get_video_info_and_content(NUMBERS_1_URL),
-    *get_video_info_and_content(NUMBERS_2_URL),
     *get_video_info_and_content(STUDY_URL),
+    *get_video_info_and_content(NUMBERS_2_URL),
     *get_video_info_and_content(PSV_URL),
     *get_video_info_and_content(FILTERED_URL),
     *get_video_info_and_content(HELLO_WORLD_URL),
