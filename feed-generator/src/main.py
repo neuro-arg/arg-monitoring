@@ -57,6 +57,14 @@ def if_none_panic(x: Any | None) -> Any:
         return x
 
 
+youtube_feed_getter = FeedGetter(
+    YOUTUBE_FEED_URL,
+    ['{http://search.yahoo.com/mrss/}community'])
+
+soundcloud_feed_getter = FeedGetter(
+    SOUNDCLOUD_FEED_URL, []
+)
+
 current_state = ArgState(
     *get_video_info_and_content(NUMBERS_1_URL),
     *get_video_info_and_content(STUDY_URL),
@@ -66,10 +74,8 @@ current_state = ArgState(
     *get_video_info_and_content(HELLO_WORLD_URL),
     *get_video_info_and_content(MEANING_OF_LIFE_URL),
     if_none_panic(SoundCloudUserGetter(SOUNDCLOUD_URL).get()),
-    if_none_panic(FeedGetter(
-        YOUTUBE_FEED_URL,
-        ['{http://search.yahoo.com/mrss/}community']).get()),
-    if_none_panic(FeedGetter(SOUNDCLOUD_FEED_URL, []).get())
+    if_none_panic(youtube_feed_getter.get()),
+    if_none_panic(soundcloud_feed_getter.get())
 )
 
 cached_state: Optional[ArgState] = None
@@ -121,3 +127,6 @@ fg.atom_file('atom.xml')
 
 with open('atom.pickle', 'wb') as f:  # type: ignore
     pickle.dump(fg, f)  # type: ignore
+
+youtube_feed_getter.save('youtubefeed.xml')
+soundcloud_feed_getter.save('soundcloudfeed.xml')

@@ -179,3 +179,4 @@ pyrightconfig.json
 cache.json
 atom.pickle
 atom.xml
+*feed.xml
