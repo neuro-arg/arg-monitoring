@@ -8,6 +8,7 @@ struct VideoInformation {
     description: Option<String>,
     thumbnail: Option<String>,
     keywords: Option<Vec<String>>,
+    subtitles: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
