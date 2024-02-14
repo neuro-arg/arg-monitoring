@@ -20,6 +20,7 @@ class FeedGetter:
     """
     def __init__(self, url: str, tags_to_remove: list[str]) -> None:
         self.url = url
+        self.raw: Optional[str] = None
         self.solution: Optional[str] = None
         self.tags_to_remove = tags_to_remove
 
@@ -42,6 +43,17 @@ class FeedGetter:
 
         return ET.tostring(tree, encoding='unicode')
 
+    def save(self, filename: str) -> None:
+        """
+        Saves the feed as a file
+        """
+        if not self.raw:
+            self.get()
+
+        with open(filename, 'w', encoding='utf-8') as f:
+            assert self.raw
+            f.write(self.raw)
+
     def get(self) -> Optional[str]:
         """
         Returns the hash of the feed content
@@ -50,11 +62,11 @@ class FeedGetter:
             return self.solution
 
         try:
-            feed = self.__interpret_and_remove_tags(
+            self.raw = self.__interpret_and_remove_tags(
                 self.__download_guard(self.url)
             )
             sha = hashlib.sha256()
-            sha.update(feed.encode('utf-8'))
+            sha.update(self.raw.encode('utf-8'))
             self.solution = sha.hexdigest()
             return self.solution
         except:  # pylint: disable=bare-except # noqa: E722
