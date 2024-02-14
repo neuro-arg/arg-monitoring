@@ -83,7 +83,7 @@ if not os.path.exists('cache.json'):
         feed_log.append('Initial. Cached is same as current')
 else:
     with open('cache.json', 'r', encoding='ascii') as f:
-        cached_state = ArgState.from_json(f.read())
+        cached_state = ArgState.from_json(f.read(), infer_missing=True)
         for (u, v) in zip(current_state.to_dict().items(),
                           cached_state.to_dict().items()):
             # compare string-wise to bypass any reference comparison

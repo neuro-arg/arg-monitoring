@@ -4,15 +4,16 @@ Pulls metadata from YouTube.
 All images will be encoded into base64
 """
 
-import base64
 import logging
+import os
 from dataclasses import dataclass
 from typing import Optional
-from utils import download_encode_and_hash
+from uuid import uuid4
 
-import requests
+import youtube_dl  # type: ignore
 from dataclasses_json import dataclass_json
 from pytube import YouTube  # type: ignore
+from utils import download_encode_and_hash
 
 
 @dataclass_json
@@ -26,6 +27,8 @@ class VideoInformation:
     description: str
     thumbnail: str
     keywords: list[str]
+    subtitles: Optional[str]
+    duration: Optional[int]
 
 
 class VideoInformationGetter:
@@ -50,6 +53,45 @@ class VideoInformationGetter:
                 continue
         return yt.description
 
+    @staticmethod
+    def __read_file_then_delete(filename: str) -> str:
+        assert os.path.exists(filename)
+        contents = ''
+        with open(filename, 'r', encoding='utf-8') as f:
+            contents = f.read()
+        os.remove(filename)
+        return contents
+
+    def __get_subtitles(self) -> str:
+        """
+        Gets the subtitles via youtube_dl. Because of how youtube_dl
+        works, we can't stream it directly to an in-memory
+        object. Instead, we'll download the file, read from it, and
+        delete it from existence
+
+        NOTE: From experimenting, if the video has real subtitles,
+        then that will be prioiritized over automatically generated
+        ones
+        """
+        file_uuid = str(uuid4())
+        opts = {
+            'skip_download': True,
+            'writesubtitles': True,
+            'subtitleslangs': ['en'],
+            'writeautomaticsub': True,
+            'outtmpl': f'/tmp/{file_uuid}',
+            'quiet': True
+        }
+
+        with youtube_dl.YoutubeDL(opts) as ydl:
+            ydl.download([self.url])
+
+        filename = f'/tmp/{file_uuid}.en.vtt'
+        if os.path.exists(filename):
+            return self.__read_file_then_delete(filename)
+        return ''
+
+
     def get(self) -> Optional[VideoInformation]:
         """
         Returns a VideoInformation object if the video exists,
@@ -63,12 +105,15 @@ class VideoInformationGetter:
         try:
             logging.info("Getting video information for %s", self.url)
             yt = YouTube(self.url)
+            subtitles = self.__get_subtitles()
             self.solution = VideoInformation(
                 yt.title,
                 yt.length,
                 self.__bug_workaround_get_description(yt),
                 download_encode_and_hash(yt.thumbnail_url),
-                yt.keywords)
+                yt.keywords,
+                subtitles,
+                yt.length)
             return self.solution
         except:  # pylint: disable=bare-except # noqa: E722
             logging.exception("Could not get video information for %s",
