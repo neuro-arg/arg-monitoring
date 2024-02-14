@@ -28,7 +28,6 @@ class VideoInformation:
     thumbnail: str
     keywords: list[str]
     subtitles: Optional[str]
-    duration: Optional[int]
 
 
 class VideoInformationGetter:
@@ -112,8 +111,7 @@ class VideoInformationGetter:
                 self.__bug_workaround_get_description(yt),
                 download_encode_and_hash(yt.thumbnail_url),
                 yt.keywords,
-                subtitles,
-                yt.length)
+                subtitles)
             return self.solution
         except:  # pylint: disable=bare-except # noqa: E722
             logging.exception("Could not get video information for %s",
