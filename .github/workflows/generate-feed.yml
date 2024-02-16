@@ -57,7 +57,7 @@ jobs:
 
       - name: Add a commit (only if there are changes)
         run: |
-          git rm atom.xml cache.json || true
+          git rm atom.xml cache.json *feed.xml || true
           git stash apply
           git add -f atom.xml cache.json *feed.xml
           git commit -m "Update atom.xml, cache.json, and Feeds" || true
