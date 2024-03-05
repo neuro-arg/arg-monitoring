@@ -77,8 +77,8 @@ current_state = ArgState(
     if_none_panic(SoundCloudUserGetter(SOUNDCLOUD_URL).get()),
     if_none_panic(youtube_feed_getter.get()),
     if_none_panic(soundcloud_feed_getter.get()),
-    if_none_panic(TwitchSource.get('neuro')),
-    if_none_panic(TwitchSource.get('evil')),
+    if_none_panic(TwitchSource('neuro').get()),
+    if_none_panic(TwitchSource('evil').get()),
 )
 
 cached_state: Optional[ArgState] = None
