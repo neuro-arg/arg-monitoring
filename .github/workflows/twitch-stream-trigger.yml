@@ -1,0 +1,66 @@
+name: Twitch Stream Trigger
+
+on:
+  workflow_dispatch:
+
+jobs:
+  handle_trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install ffmpeg libsm6 libxext6 -y
+          python -m pip install --upgrade pip
+          python -m pip install ./feed-generator
+
+      - name: Run vedal987_scrutinize.py
+        run: |
+          cd feed-generator/src/sources/twitch_source
+          python vedal987_scrutinize.py || true
+          cd -
+          cp feed-generator/src/sources/twitch_source/*.json .
+
+      - name: Stash results
+        run: |
+          git config --local user.email "worker@github.com"
+          git config --local user.name "Twitch Worker"
+          git add -f neuro.json || true
+          git add -f evil.json || true
+          git stash -m "generated changes"
+
+      - name: Checkout to publish
+        uses: actions/checkout@v4
+        with:
+          ref: 'publish'
+
+      - name: Add a commit (only if there are changes)
+        run: |
+          git rm neuro.json || true
+          git rm evil.json || true
+          git stash apply
+          git add -f neuro.json || true
+          git add -f evil.json || true
+          git commit -m "Update Twitch JSON" || true
+          git log
+
+      - name: Push new commit
+        if: ${{ !github.event.act }}
+        run: |
+          git push origin publish
+
+      - name: Checkout back to main
+        uses: actions/checkout@v4
+        with:
+          ref: 'main'
+
+  call_next_workflow:
+    needs: handle_trigger
+    uses: ./.github/workflows/generate-feed.yml
+    secrets: inherit

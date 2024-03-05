@@ -18,6 +18,7 @@ from metadata.soundcloud_metadata import (SoundCloudUserGetter,
                                           SoundCloudUserInformation)
 from metadata.youtube_metadata import VideoInformation, VideoInformationGetter
 from sources.youtube_source import YoutubeSource
+from sources.twitch_source import TwitchSource
 
 logging.basicConfig(
     level=logging.INFO,
@@ -75,7 +76,9 @@ current_state = ArgState(
     *get_video_info_and_content(MEANING_OF_LIFE_URL),
     if_none_panic(SoundCloudUserGetter(SOUNDCLOUD_URL).get()),
     if_none_panic(youtube_feed_getter.get()),
-    if_none_panic(soundcloud_feed_getter.get())
+    if_none_panic(soundcloud_feed_getter.get()),
+    if_none_panic(TwitchSource.get('neuro')),
+    if_none_panic(TwitchSource.get('evil')),
 )
 
 cached_state: Optional[ArgState] = None

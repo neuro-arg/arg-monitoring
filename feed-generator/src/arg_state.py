@@ -38,3 +38,6 @@ class ArgState(DataClassJsonMixin):
 
     youtube_feed_hash: str
     soundcloud_feed_hash: str
+
+    neuro_twitch_identifiers: str
+    evil_twitch_identifiers: str
