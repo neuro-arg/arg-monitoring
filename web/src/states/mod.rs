@@ -55,6 +55,9 @@ structure_reflection! {
         soundcloud_user_info: Option<SoundCloudUserInformation>,
 
         youtube_feed_hash: Option<String>,
-        soundcloud_feed_hash: Option<String>
+        soundcloud_feed_hash: Option<String>,
+
+        neuro_twitch_identifiers: Option<String>,
+        evil_twitch_identifiers: Option<String>
     }
 }
