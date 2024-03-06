@@ -14,6 +14,14 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Cache / Restore pip packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install dependencies
         run: |
           sudo apt-get update && sudo apt-get install ffmpeg libsm6 libxext6 -y
@@ -35,18 +43,14 @@ jobs:
           git add -f evil.json || true
           git stash -m "generated changes"
 
-      - name: Checkout to publish
-        uses: actions/checkout@v4
-        with:
-          ref: 'publish'
-
       - name: Add a commit (only if there are changes)
         run: |
+          git checkout publish
           git rm neuro.json || true
           git rm evil.json || true
           git stash apply
-          git add -f neuro.json || true
-          git add -f evil.json || true
+          git add -f neuro.json || git checkout HEAD -- neuro.json
+          git add -f evil.json || git checkout HEAD -- evil.json
           git commit -m "Update Twitch JSON" || true
           git log
 
@@ -54,11 +58,6 @@ jobs:
         if: ${{ !github.event.act }}
         run: |
           git push origin publish
-
-      - name: Checkout back to main
-        uses: actions/checkout@v4
-        with:
-          ref: 'main'
 
   call_next_workflow:
     needs: handle_trigger
