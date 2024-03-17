@@ -171,7 +171,7 @@ def scrutinize_with_images_and_thresholds(  # pylint: disable=too-many-locals
     logging.info('SSIM scores: %s', ssim_scores)
     for idx, score in enumerate(ssim_scores):
         mean, mini = thresholds[idx]
-        results.append(bool(score + (mini - mean) >= mean))
+        results.append(bool(score + (mean - mini) >= mean))
     return results
 
 
