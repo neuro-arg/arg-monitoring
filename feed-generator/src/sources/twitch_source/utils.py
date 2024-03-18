@@ -68,16 +68,18 @@ def create_process_for_720p_video_for_youtube(
     final_code = 0
 
     if "720p60" not in output:
-        final_code = output.split('\n', max_split=1)[0] \
-                           .split(' ', max_split=1)[0]
+        final_code = output.split('\n', maxsplit=1)[0] \
+                           .split(' ', maxsplit=1)[0]
     else:
         final_code = [
             segment for segment in output.split('\n')
             if "720p60" in segment][0].split(' ')[0]
 
     command = (f"youtube-dl -f {final_code} -o - '{youtube_url}'"
-               " | ffmpeg -i - -c:v ppm -f image2pipe -")
-    return subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+               " | ffmpeg -hide_banner -loglevel quiet"
+               " -i - -c:v ppm -f image2pipe -")
+    return subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
+                            stderr=subprocess.DEVNULL)
 
 
 def ppm_header_parser(

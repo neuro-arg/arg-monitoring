@@ -11,19 +11,21 @@ video.
 
 import os
 import re
+import time
+import logging
 from collections import namedtuple
 from io import BytesIO
 from multiprocessing import Pool
-from typing import Callable
 from tempfile import TemporaryDirectory
 
 import numpy as np
 from PIL import Image
-from skimage.metrics import structural_similarity as ssim
 
 from utils import (calculate_ssim, create_process_for_720p_video_for_youtube,
                    nparray_crop_frame, nparray_segment_into_squares,
                    ppm_header_parser)
+
+logging.basicConfig(level=logging.DEBUG, filename='analyze.log')
 
 # Tuples
 SourceImageTuple = namedtuple('SourceImageTuple',
@@ -35,6 +37,7 @@ IMAGES_FILENAME_PATTERN = r'square_(\d+)_(\d+).png'
 DEPTH = 3  # hardcoded for speed
 SQUARE_SIZE = 20
 DETECTOR_THRESHOLD = 0.9
+GRACE_DETECTOR_PERIOD = 10  # number of frames off detection before quitting
 TRAINING_CLIPS_LIST = input("Training clips list: ")
 SRC_DIRECTORY = input('Source Directory: ')
 DETECTION_SQUARE = input('Path to detection square: ')
@@ -64,7 +67,8 @@ for file in sorted(os.listdir(SRC_DIRECTORY)):
     IMAGES.append(SourceImageTuple(np.array(image), int(square_idx)))
 
 # Functions
-def process_squares_with_target_image(params: tuple[np.ndarray, SourceImageTuple]) -> float:
+def process_squares_with_target_image(
+        params: tuple[np.ndarray, SourceImageTuple]) -> float:
     """
     This function is designed to be run with multiprocessing.
 
@@ -88,7 +92,16 @@ def process_squares_with_target_images(params: tuple[np.ndarray, list[SourceImag
 def do_one_video(link: str) -> list[float]:
     ds = np.array(Image.open(DETECTION_SQUARE))
     curr_dir = os.getcwd()
+    grace = 0
+    start_time = time.time()
+
+    # DEBUG: Get elapsed time to calculate speed
+    if logging.root.isEnabledFor(logging.DEBUG):
+        interval_elapsed = time.time()
+        framecount = 0
+
     with TemporaryDirectory() as tempdir:
+        # chdir guard for the detection square
         os.chdir(tempdir)
         ssim_scores = [-1.0] * len(IMAGES)
         with create_process_for_720p_video_for_youtube(link) as process:
@@ -108,9 +121,16 @@ def do_one_video(link: str) -> list[float]:
                 image = Image.open(image_buffer)
                 image_array = np.array(image)
 
-                if calculate_ssim(image_array[:SQUARE_SIZE, :SQUARE_SIZE],
-                                  ds) < DETECTOR_THRESHOLD:
-                    break
+                ds_ssim = calculate_ssim(image_array[:SQUARE_SIZE, :SQUARE_SIZE], ds)
+                if ds_ssim < DETECTOR_THRESHOLD:
+                    logging.debug("Link %s: Detection square not found, GRACE: %d, SSIM: %d", link, grace, ds_ssim)
+                    grace += 1
+
+                    if grace >= GRACE_DETECTOR_PERIOD:
+                        logging.debug('Link %s: Detection square not found, quitting', link)
+                        break
+                else:
+                    grace = 0
 
                 image_array = nparray_crop_frame(image_array, height, width)
                 segments = nparray_segment_into_squares(image_array, SQUARE_SIZE)
@@ -118,17 +138,36 @@ def do_one_video(link: str) -> list[float]:
                 ssim_results = map(process_squares_with_target_image,
                                    ((segments, tuple) for tuple in IMAGES))
                 ssim_scores = [max(x, y) for x, y in zip(ssim_scores, ssim_results)]
+
+                # DEBUG: Calculate speed
+                if logging.root.isEnabledFor(logging.DEBUG):
+                    framecount += 1
+                    if time.time() - interval_elapsed >= 5:
+                        logging.debug('Link %s: Speed for this process at %d fps',
+                                      link,
+                                      float(framecount) / (time.time() - interval_elapsed))
+                        interval_elapsed = time.time()
+                        framecount = 0
+
+        elapsed = time.time() - start_time
+        logging.info('Link %s: finished after %s seconds', link, elapsed)
         os.chdir(curr_dir)
         return ssim_scores
 
+
 # Main
 with Pool() as pool:
-    video_ssim_scores = pool.map(do_one_video, YOUTUBE_VIDEOS)
+    logging.info('The script will be running on %d processes', pool._processes)
+    logging.info('This will stress your PC!')
+    video_ssim_scores = np.array(pool.map(do_one_video, YOUTUBE_VIDEOS))
 
-mean = np.array(video_ssim_scores).mean(axis=0)
-mins = np.array(video_ssim_scores).min(axis=0)
+mean = video_ssim_scores.mean(axis=0)
+mins = video_ssim_scores.min(axis=0)
 results = np.array(list(zip(mean, mins)))
-np.savez('results.npz', thresholds=results)
+np.savez('results.npz', thresholds=results,
+         raw_results=video_ssim_scores)
+print('Results:')
+print(results)
 print('Means:')
 print(mean)
 print('Mins:')
