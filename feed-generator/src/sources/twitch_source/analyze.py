@@ -87,6 +87,7 @@ def process_squares_with_target_images(params: tuple[np.ndarray, list[SourceImag
 
 def do_one_video(link: str) -> list[float]:
     ds = np.array(Image.open(DETECTION_SQUARE))
+    curr_dir = os.getcwd()
     with TemporaryDirectory() as tempdir:
         os.chdir(tempdir)
         ssim_scores = [-1.0] * len(IMAGES)
@@ -117,6 +118,7 @@ def do_one_video(link: str) -> list[float]:
                 ssim_results = map(process_squares_with_target_image,
                                    ((segments, tuple) for tuple in IMAGES))
                 ssim_scores = [max(x, y) for x, y in zip(ssim_scores, ssim_results)]
+        os.chdir(curr_dir)
         return ssim_scores
 
 # Main
