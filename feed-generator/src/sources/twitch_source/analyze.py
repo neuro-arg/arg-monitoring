@@ -23,7 +23,8 @@ from PIL import Image
 
 from utils import (calculate_ssim, create_process_for_720p_video_for_youtube,
                    nparray_crop_frame, nparray_segment_into_squares,
-                   ppm_header_parser)
+                   ppm_header_parser, calculate_rgb_diff,
+                   WHOSE_STREAM_SQUARE_NUMBER)
 
 logging.basicConfig(level=logging.DEBUG, filename='analyze.log')
 
@@ -121,9 +122,12 @@ def do_one_video(link: str) -> list[float]:
                 image = Image.open(image_buffer)
                 image_array = np.array(image)
 
-                ds_ssim = calculate_ssim(image_array[:SQUARE_SIZE, :SQUARE_SIZE], ds)
-                if ds_ssim < DETECTOR_THRESHOLD:
-                    logging.debug("Link %s: Detection square not found, GRACE: %d, SSIM: %d", link, grace, ds_ssim)
+                square = image_array[:SQUARE_SIZE,
+                                     (WHOSE_STREAM_SQUARE_NUMBER - 1) * SQUARE_SIZE
+                                     :WHOSE_STREAM_SQUARE_NUMBER * SQUARE_SIZE]
+                ds_diff = calculate_rgb_diff(square, ds)
+                if ds_diff < DETECTOR_THRESHOLD:
+                    logging.debug("Link %s: Detection square not found, GRACE: %d, Diff: %d", link, grace, ds_diff)
                     grace += 1
 
                     if grace >= GRACE_DETECTOR_PERIOD:
