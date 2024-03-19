@@ -25,7 +25,8 @@ from utils import (
     EXPECTED_HEIGHT, EXPECTED_WIDTH, calculate_ssim,
     create_process_for_720p_video_for_youtube,
     nparray_crop_frame, nparray_segment_into_squares,
-    ppm_header_parser, whose_stream, DETECTOR_THRESHOLD)
+    ppm_header_parser, whose_stream, DETECTOR_THRESHOLD,
+    WHOSE_STREAM_SQUARE_NUMBER, calculate_rgb_diff)
 
 # Tuples
 # TODO: put into utilities
@@ -156,8 +157,10 @@ def scrutinize_with_images_and_thresholds(  # pylint: disable=too-many-locals
         except StopIteration:
             break
 
-        if calculate_ssim(image_array[:SQUARE_SIZE, :SQUARE_SIZE],
-                          detector_square) < DETECTOR_THRESHOLD:
+        square = image_array[:SQUARE_SIZE,
+                             (WHOSE_STREAM_SQUARE_NUMBER - 1) * SQUARE_SIZE
+                             :WHOSE_STREAM_SQUARE_NUMBER * SQUARE_SIZE]
+        if calculate_rgb_diff(square, detector_square) < DETECTOR_THRESHOLD:
             break
 
         image_array = nparray_crop_frame(image_array, height, width)
