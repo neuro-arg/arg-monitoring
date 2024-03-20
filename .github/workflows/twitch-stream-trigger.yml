@@ -29,6 +29,8 @@ jobs:
           python -m pip install ./feed-generator
 
       - name: Run vedal987_scrutinize.py
+        env:
+          TWITCH_OAUTH: ${{ secrets.TWITCH_OAUTH }}
         run: |
           cd feed-generator/src/sources/twitch_source
           python vedal987_scrutinize.py || true
