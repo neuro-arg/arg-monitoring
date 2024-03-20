@@ -94,5 +94,5 @@ if __name__ == '__main__':
         print('Please fill in the secrets.ini file.')
         sys.exit(1)
 
-    github = Github(auth=Auth.Token(_github_token))
+    g = Github(auth=Auth.Token(_github_token))
     asyncio.run(hook(_webhook_url, _client_id, _client_secret, _user_id))
