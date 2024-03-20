@@ -8,6 +8,7 @@ import json
 import logging
 import subprocess
 import sys
+import os
 
 import numpy as np
 from PIL import Image
@@ -23,6 +24,10 @@ logger = logging.getLogger(__name__)
 # This entire script is like a main script, ignore capitalization rules
 
 # Constants
+if 'TWITCH_OAUTH' not in os.environ:
+    logger.warning('No Twitch OAuth token, might lose some video data!')
+
+twitch_oauth = os.environ.get('TWITCH_OAUTH', None)
 twitch_username = 'vedal987'
 neuro_folder = './neuro'
 evil_folder = './evil'
@@ -35,8 +40,12 @@ depth = 3
 
 # NOTE: FPS is forcefully tuned down to 30. Not sure if this affects accuracy
 # but it improves inference performance
-command = (f'youtube-dl -f best -o - https://www.twitch.tv/{twitch_username} |'
-           'ffmpeg -i - -vf "scale=1280:720,fps=30" -vcodec ppm -f image2pipe -')
+oauth_flag = ' ' if twitch_oauth is None \
+    else f' "--twitch-api-header=Authorization=OAuth {twitch_oauth}" '
+command = ('streamlink --twitch-disable-ads --twitch-low-latency'
+           + oauth_flag
+           + f'https://www.twitch.tv/{twitch_username} source -O | '
+           'ffmpeg -i - -vf "scale=1280:720,fps=30" -c:v ppm -f image2pipe -')
 
 if __name__ != '__main__':
     raise ImportError('This script is meant to be run as a main script.')

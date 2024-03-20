@@ -26,7 +26,8 @@ from utils import (
     create_process_for_720p_video_for_youtube,
     nparray_crop_frame, nparray_segment_into_squares,
     ppm_header_parser, whose_stream, DETECTOR_THRESHOLD,
-    WHOSE_STREAM_SQUARE_NUMBER, calculate_rgb_diff)
+    WHOSE_STREAM_SQUARE_NUMBER, calculate_rgb_diff,
+    create_process_for_ffmpeg_video)
 
 # Tuples
 # TODO: put into utilities
