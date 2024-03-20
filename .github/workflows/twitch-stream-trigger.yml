@@ -43,9 +43,13 @@ jobs:
           git add -f evil.json || true
           git stash -m "generated changes"
 
+      - name: Checkout to publish
+        uses: actions/checkout@v4
+        with:
+          ref: 'publish'
+
       - name: Add a commit (only if there are changes)
         run: |
-          git checkout publish
           git rm neuro.json || true
           git rm evil.json || true
           git stash apply
