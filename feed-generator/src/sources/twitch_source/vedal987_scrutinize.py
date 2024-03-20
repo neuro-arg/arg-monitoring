@@ -44,7 +44,7 @@ oauth_flag = ' ' if twitch_oauth is None \
     else f' "--twitch-api-header=Authorization=OAuth {twitch_oauth}" '
 command = ('streamlink --twitch-disable-ads --twitch-low-latency'
            + oauth_flag
-           + f'https://www.twitch.tv/{twitch_username} source -O | '
+           + f'https://www.twitch.tv/{twitch_username} best -O | '
            'ffmpeg -i - -vf "scale=1280:720,fps=30" -c:v ppm -f image2pipe -')
 
 if __name__ != '__main__':
