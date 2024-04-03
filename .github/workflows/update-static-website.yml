@@ -55,8 +55,8 @@ jobs:
 
     - name: Perform more git magic
       run: |
-        git checkout publish
-        git rm -r *.js *.html *.wasm *.css web/ || true
+        git rm -r *.js *.html *.wasm *.css || true
+        git rm -r web/ || true
         git stash apply
         mv dist/* .
         git rm -r dist/
