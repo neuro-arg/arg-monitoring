@@ -25,7 +25,7 @@ CROPPED_HEIGHT = int(EXPECTED_HEIGHT * CROP_RATIO_Y -
                      CROP_OFFSET_RATIO_Y * EXPECTED_HEIGHT)
 
 WHOSE_STREAM_SQUARE_NUMBER = 34
-DETECTOR_THRESHOLD = 0.9
+DETECTOR_THRESHOLD = 0.85
 
 
 def nparray_crop_frame(image_array: np.ndarray,
@@ -214,6 +214,24 @@ def calculate_rgb_diff(target: np.ndarray, reference: np.ndarray) -> float:
     return 1 / (1 + np.exp(-normalized / 0.1))
 
 
+def extract_dynamic_detector_square(frame: np.ndarray,
+                                    square_size: int) -> np.ndarray:
+    """
+    Extracts the dynamic detector square.
+    This is the detector square used after the "whose_stream" detection.
+
+    Added to be resistant against "Just Chatting" streams.
+
+    Args:
+        frame (np.ndarray): The frame
+        square_size (int): The size of the square
+
+    Returns:
+        np.ndarray: The detector square
+    """
+    return frame[:square_size, :square_size]
+
+
 def whose_stream(target: np.ndarray,
                  neuro_detector_square: np.ndarray,
                  evil_detector_square: np.ndarray,
@@ -238,6 +256,8 @@ def whose_stream(target: np.ndarray,
 
     logging.info('Neuro diff: %s', neuro_diff)
     logging.info('Evil diff: %s', evil_diff)
+
+    return 'dunno'
 
     if neuro_diff > evil_diff and neuro_diff > DETECTOR_THRESHOLD:
         return 'neuro'
