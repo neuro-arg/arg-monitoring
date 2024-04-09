@@ -257,8 +257,6 @@ def whose_stream(target: np.ndarray,
     logging.info('Neuro diff: %s', neuro_diff)
     logging.info('Evil diff: %s', evil_diff)
 
-    return 'dunno'
-
     if neuro_diff > evil_diff and neuro_diff > DETECTOR_THRESHOLD:
         return 'neuro'
 
