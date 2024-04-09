@@ -48,29 +48,33 @@ command = ('streamlink --twitch-disable-ads --twitch-low-latency'
            + oauth_flag
            + f'https://www.twitch.tv/{twitch_username} best -O | '
            'ffmpeg -i - -vf "scale=1280:720,fps=30" -c:v ppm -f image2pipe -')
+detected_streamers = None
 
 if __name__ != '__main__':
     raise ImportError('This script is meant to be run as a main script.')
 
-with subprocess.Popen(command, shell=True, stdout=subprocess.PIPE) as process:
-    first_frame = read_one_frame(process)[0]
-    detected_streamers = [whose_stream(first_frame, neuro_detector,
-                                       evil_detector, square_size)]
+while detected_streamers is None or len(detected_streamers) > 0:
+    with subprocess.Popen(command, shell=True, stdout=subprocess.PIPE) \
+         as process:
+        first_frame = read_one_frame(process)[0]
+        if detected_streamers is None:
+            detected_streamers = [whose_stream(first_frame, neuro_detector,
+                                               evil_detector, square_size)]
 
-    threshold_file = (neuro_thresholds if detected_streamers[0] == 'neuro'
-                      else evil_thresholds)
-    images_folder = (neuro_folder if detected_streamers[0] == 'neuro'
-                     else evil_folder)
+        threshold_file = (neuro_thresholds if detected_streamers[0] == 'neuro'
+                          else evil_thresholds)
+        images_folder = (neuro_folder if detected_streamers[0] == 'neuro'
+                         else evil_folder)
 
-    logger.info('Detected streamer: %s', detected_streamers[0])
+        logger.info('Detected streamer: %s', detected_streamers[0])
 
-    if detected_streamers[0] == 'dunno':
-        logger.warning('Could not determine the streamer, panic mode.')
-        logger.warning('Panic mode will produce results for both streamers')
-        detected_streamers = ['neuro', 'evil']
+        if detected_streamers[0] == 'dunno':
+            logger.warning('Could not determine the streamer, panic mode.')
+            logger.warning(
+                'Panic mode will produce results for both streamers')
+            detected_streamers = ['neuro', 'evil']
 
-    for detected_streamer in detected_streamers:
-        logging.info('Now processing for %s', detected_streamer)
+        logging.info('Now processing for %s', detected_streamers[0])
         images = load_images_from_directory(images_folder)
         thresholds = load_thresholds(threshold_file)
         detector_square = extract_dynamic_detector_square(first_frame,
@@ -83,5 +87,8 @@ with subprocess.Popen(command, shell=True, stdout=subprocess.PIPE) as process:
         results = scrutinize_with_images_and_thresholds(
             process, images, thresholds, detector_square)
 
-        with open(f'{detected_streamer}.json', 'w', encoding='utf8') as file:
+        with open(f'{detected_streamers[0]}.json', 'w',
+                  encoding='utf8') as file:
             json.dump(results, file)
+
+        detected_streamers.pop(0)
