@@ -14,7 +14,8 @@ import numpy as np
 from PIL import Image
 
 from scrutinize import (load_images_from_directory, load_thresholds,
-                        read_one_frame, scrutinize_with_images_and_thresholds)
+                        read_one_frame, scrutinize_with_images_and_thresholds,
+                        extract_dynamic_detector_square)
 from utils import whose_stream
 
 logging.basicConfig(level=logging.INFO)
@@ -43,6 +44,7 @@ depth = 3
 oauth_flag = ' ' if twitch_oauth is None \
     else f' "--twitch-api-header=Authorization=OAuth {twitch_oauth}" '
 command = ('streamlink --twitch-disable-ads --twitch-low-latency'
+           + ' --hls-live-restart'  # start from the beginning
            + oauth_flag
            + f'https://www.twitch.tv/{twitch_username} best -O | '
            'ffmpeg -i - -vf "scale=1280:720,fps=30" -c:v ppm -f image2pipe -')
@@ -52,26 +54,34 @@ if __name__ != '__main__':
 
 with subprocess.Popen(command, shell=True, stdout=subprocess.PIPE) as process:
     first_frame = read_one_frame(process)[0]
-    detected_streamer = whose_stream(first_frame, neuro_detector,
-                                     evil_detector, square_size)
+    detected_streamers = [whose_stream(first_frame, neuro_detector,
+                                       evil_detector, square_size)]
 
-    threshold_file = (neuro_thresholds if detected_streamer == 'neuro'
+    threshold_file = (neuro_thresholds if detected_streamers[0] == 'neuro'
                       else evil_thresholds)
-    images_folder = (neuro_folder if detected_streamer == 'neuro'
+    images_folder = (neuro_folder if detected_streamers[0] == 'neuro'
                      else evil_folder)
 
-    logger.info('Detected streamer: %s', detected_streamer)
-    images = load_images_from_directory(images_folder)
-    thresholds = load_thresholds(threshold_file)
-    detector_square = (neuro_detector if detected_streamer == 'neuro'
-                       else evil_detector)
+    logger.info('Detected streamer: %s', detected_streamers[0])
 
-    if len(images) != len(thresholds):
-        logger.fatal('Mismatch between images and thresholds')
-        sys.exit(1)
+    if detected_streamers[0] == 'dunno':
+        logger.warning('Could not determine the streamer, panic mode.')
+        logger.warning('Panic mode will produce results for both streamers')
+        detected_streamers = ['neuro', 'evil']
 
-    results = scrutinize_with_images_and_thresholds(
-        process, images, thresholds, detector_square)
+    for detected_streamer in detected_streamers:
+        logging.info('Now processing for %s', detected_streamer)
+        images = load_images_from_directory(images_folder)
+        thresholds = load_thresholds(threshold_file)
+        detector_square = extract_dynamic_detector_square(first_frame,
+                                                          square_size)
 
-    with open(f'{detected_streamer}.json', 'w', encoding='utf8') as file:
-        json.dump(results, file)
+        if len(images) != len(thresholds):
+            logger.fatal('Mismatch between images and thresholds')
+            sys.exit(1)
+
+        results = scrutinize_with_images_and_thresholds(
+            process, images, thresholds, detector_square)
+
+        with open(f'{detected_streamer}.json', 'w', encoding='utf8') as file:
+            json.dump(results, file)

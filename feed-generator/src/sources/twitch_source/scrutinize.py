@@ -10,10 +10,11 @@ It then compares it to a pre-computed thresholds file, and outputs
 those those squares that are above the threshold.
 """
 
-import os
 import logging
+import os
 import re
 import subprocess
+import time
 from collections import namedtuple
 from io import BytesIO
 from typing import cast
@@ -21,13 +22,12 @@ from typing import cast
 import numpy as np
 from PIL import Image
 
-from utils import (
-    EXPECTED_HEIGHT, EXPECTED_WIDTH, calculate_ssim,
-    create_process_for_720p_video_for_youtube,
-    nparray_crop_frame, nparray_segment_into_squares,
-    ppm_header_parser, whose_stream, DETECTOR_THRESHOLD,
-    WHOSE_STREAM_SQUARE_NUMBER, calculate_rgb_diff,
-    create_process_for_ffmpeg_video)
+from utils import (DETECTOR_THRESHOLD, EXPECTED_HEIGHT, EXPECTED_WIDTH,
+                   WHOSE_STREAM_SQUARE_NUMBER, calculate_rgb_diff,
+                   calculate_ssim, create_process_for_720p_video_for_youtube,
+                   nparray_crop_frame, nparray_segment_into_squares,
+                   ppm_header_parser, whose_stream,
+                   extract_dynamic_detector_square)
 
 # Tuples
 # TODO: put into utilities
@@ -152,17 +152,26 @@ def scrutinize_with_images_and_thresholds(  # pylint: disable=too-many-locals
     assert process.stdout is not None
 
     ssim_scores = [-1.0] * len(images)
+    ssim_mismatch_time = None  # This is init once for optimization purposes
     while process.poll() is None:
         try:
             (image_array, width, height) = read_one_frame(process)
         except StopIteration:
             break
 
-        square = image_array[:SQUARE_SIZE,
-                             (WHOSE_STREAM_SQUARE_NUMBER - 1) * SQUARE_SIZE
-                             :WHOSE_STREAM_SQUARE_NUMBER * SQUARE_SIZE]
-        if calculate_rgb_diff(square, detector_square) < DETECTOR_THRESHOLD:
-            break
+        if calculate_ssim(
+                extract_dynamic_detector_square(image_array, SQUARE_SIZE),
+                detector_square) < DETECTOR_THRESHOLD:
+            if ssim_mismatch_time is None:
+                ssim_mismatch_time = time.time()
+                logging.info('Detector square not found! Grace period started.')
+            elif time.time() - ssim_mismatch_time > 5:
+                logging.info('Detector square not found after 5 seconds.')
+                break
+        elif ssim_mismatch_time is not None:
+            logging.info('Detector square recovered after lost for %d seconds',
+                         time.time() - ssim_mismatch_time)
+            ssim_mismatch_time = None
 
         image_array = nparray_crop_frame(image_array, height, width)
         segments = nparray_segment_into_squares(image_array, SQUARE_SIZE)
@@ -230,7 +239,7 @@ if __name__ == '__main__':
         assert len(IMAGES) == len(THRESHOLDS)
 
         RESULTS = scrutinize_with_images_and_thresholds(
-            PROCESS, IMAGES, THRESHOLDS, neuro_ds
-            if DETECTED_STREAMER == 'neuro'
-            else evil_ds)
+            PROCESS, IMAGES, THRESHOLDS,
+            extract_dynamic_detector_square(FIRST_FRAME, SQUARE_SIZE)
+        )
         print(RESULTS)
