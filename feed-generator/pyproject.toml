@@ -26,7 +26,7 @@ types-pillow = "^10.2.0.20240406"
 twitchapi = "^4.2.0"
 pygithub = "^2.3.0"
 types-requests = "^2.31.0.20240406"
-streamlink = "^6.7.2"
+streamlink = "^6.7.3"
 
 [build-system]
 requires = ["poetry-core"]
