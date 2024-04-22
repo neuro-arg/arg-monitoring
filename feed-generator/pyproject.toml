@@ -20,7 +20,7 @@ youtube-dl = { git = "https://github.com/ytdl-org/youtube-dl.git", branch = "mas
 pillow = "^10.3.0"
 numpy = "^1.26.4"
 opencv-python = "^4.9.0.80"
-scikit-image = "^0.22.0"
+scikit-image = "^0.23.2"
 matplotlib = "^3.8.4"
 types-pillow = "^10.2.0.20240406"
 twitchapi = "^4.2.0"
