@@ -14,7 +14,7 @@ dataclasses-json = "^0.6.4"
 beautifulsoup4 = "^4.12.3"
 feedgen = "^1.0.0"
 pylint = "*"
-mypy = "^1.9.0"
+mypy = "^1.10.0"
 flake8 = "*"
 youtube-dl = { git = "https://github.com/ytdl-org/youtube-dl.git", branch = "master" }
 pillow = "^10.3.0"
