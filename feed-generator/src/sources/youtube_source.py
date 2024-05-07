@@ -8,7 +8,8 @@ import logging
 from io import BytesIO
 from typing import Optional
 
-from pytube import YouTube  # type: ignore
+from contextlib import redirect_stdout
+from youtube_dl import YoutubeDL # type: ignore
 
 
 class YoutubeSource:
@@ -26,6 +27,20 @@ class YoutubeSource:
             sha.update(chunk)
         return sha.hexdigest()
 
+    @staticmethod
+    def __get_lowest_video_data(video_id: str) -> BytesIO:
+        buffer = BytesIO()
+        ctx = {
+            'outtmpl': "-",
+            'logtostderr': True,
+            'format': 'worst'
+        }
+        with redirect_stdout(buffer), YoutubeDL(ctx) as ytdl:  # type: ignore
+            ytdl.download([video_id])
+
+        buffer.seek(0)
+        return buffer
+
     def get(self) -> Optional[str]:
         """
         Downloads the lowest quality Youtube video, and obtains a hash
@@ -36,10 +51,7 @@ class YoutubeSource:
         try:
             logging.info("Retrieving lowest quality resolution for %s",
                          self.url)
-            stream = BytesIO()
-            yt = YouTube(self.url)
-            yt.streams.get_lowest_resolution().stream_to_buffer(stream)
-            stream.seek(0)
+            stream = self.__get_lowest_video_data(self.url)
             self.hash = self.__calculate_hash(stream)
             return self.hash
         except:  # pylint: disable=bare-except # noqa: E722
