@@ -17,6 +17,7 @@ from metadata.feeds import FeedGetter
 from metadata.soundcloud_metadata import (SoundCloudUserGetter,
                                           SoundCloudUserInformation)
 from metadata.youtube_metadata import VideoInformation, VideoInformationGetter
+from metadata.ytc_metadata import ChannelInformation, ChannelInformationGetter
 from sources.youtube_source import YoutubeSource
 from sources.twitch_source import TwitchSource
 
@@ -36,6 +37,8 @@ SOUNDCLOUD_URL = "https://soundcloud.com/572943"
 YOUTUBE_FEED_URL = \
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCqOK_pl0LS0e8Lp7HMRDZsw"
 SOUNDCLOUD_FEED_URL = "https://feeds.soundcloud.com/users/soundcloud:users:1258077262/sounds.rss"
+
+YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@_neurosama"
 
 
 def get_video_info_and_content(url) -> tuple[VideoInformation, str]:
@@ -79,6 +82,7 @@ current_state = ArgState(
     if_none_panic(soundcloud_feed_getter.get()),
     if_none_panic(TwitchSource('neuro').get()),
     if_none_panic(TwitchSource('evil').get()),
+    if_none_panic(ChannelInformationGetter(YOUTUBE_CHANNEL_URL).get()),
 )
 
 cached_state: Optional[ArgState] = None

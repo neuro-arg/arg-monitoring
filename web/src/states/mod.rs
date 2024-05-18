@@ -20,6 +20,15 @@ struct SoundCloudUserInformation {
     n_visuals: Option<u64>,
 }
 
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
+struct YouTubeChannel {
+    name: Option<String>,
+    description: Option<String>,
+    tags: Option<String>,
+    profile_pic_hash: Option<String>,
+    profile_banner_hash: Option<String>,
+}
+
 macro_rules! structure_reflection {
     ($(#[$($attr:meta),*]),*
      struct $name:ident { $($fname:ident : $ftype:ty),* }) => {
@@ -58,6 +67,8 @@ structure_reflection! {
         soundcloud_feed_hash: Option<String>,
 
         neuro_twitch_identifiers: Option<String>,
-        evil_twitch_identifiers: Option<String>
+        evil_twitch_identifiers: Option<String>,
+
+        youtube_channel_info: Option<YouTubeChannel>
     }
 }
