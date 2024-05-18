@@ -26,6 +26,7 @@ class SoundCloudUserInformation:
     n_tracks: int
     n_following: int
     n_visuals: int
+    avatar: Optional[str]
 
 
 class SoundCloudUserGetter:
@@ -63,7 +64,10 @@ class SoundCloudUserGetter:
                     ["visual_url"]),
                 int(interesting_data["data"]["track_count"]),
                 int(interesting_data["data"]["followings_count"]),
-                len(interesting_data["data"]["visuals"]["visuals"]))
+                len(interesting_data["data"]["visuals"]["visuals"]),
+                download_encode_and_hash(
+                    interesting_data["data"]["avatar_url"])
+            )
             return self.solution
         except:  # pylint: disable=bare-except # noqa: E722
             logging.exception("Could not get user information for %s",
