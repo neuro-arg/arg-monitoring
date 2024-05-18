@@ -151,9 +151,14 @@ def scrutinize_with_images_and_thresholds(  # pylint: disable=too-many-locals
     """
     assert process.stdout is not None
 
+    start_time = time.time()
     ssim_scores = [-1.0] * len(images)
     ssim_mismatch_time = None  # This is init once for optimization purposes
     while process.poll() is None:
+        if time.time() - start_time > 1800:
+            logging.warning('Monitoring timeout. Might want to alert the dev.')
+            break
+
         try:
             (image_array, width, height) = read_one_frame(process)
         except StopIteration:
