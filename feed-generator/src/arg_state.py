@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json, DataClassJsonMixin
 from metadata.youtube_metadata import VideoInformation
 from metadata.soundcloud_metadata import SoundCloudUserInformation
+from metadata.ytc_metadata import ChannelInformation
 
 
 @dataclass_json
@@ -41,3 +42,5 @@ class ArgState(DataClassJsonMixin):
 
     neuro_twitch_identifiers: str
     evil_twitch_identifiers: str
+
+    youtube_channel_info: ChannelInformation
