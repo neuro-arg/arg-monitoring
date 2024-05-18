@@ -33,7 +33,7 @@ pub async fn get_text_from_url(url: &str) -> Option<String> {
 #[wasm_bindgen]
 pub async fn get_closest_commit(date: &str) -> Option<String> {
     let api_url = format!(
-        "https://api.github.com/repos/neuro-arg/arg-monitoring/commits?sha=publish&until={}&per_page=1",
+        "https://api.github.com/repos/neuro-arg/arg-monitoring/commits?sha=publish&until={}Z&per_page=1",
         date
     );
 
