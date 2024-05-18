@@ -1775,17 +1775,6 @@ files = [
 six = ">=1.5"
 
 [[package]]
-name = "pytube"
-version = "15.0.0"
-description = "Python 3 library for downloading YouTube Videos."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "pytube-15.0.0-py3-none-any.whl", hash = "sha256:07b9904749e213485780d7eb606e5e5b8e4341aa4dccf699160876da00e12d78"},
-    {file = "pytube-15.0.0.tar.gz", hash = "sha256:076052efe76f390dfa24b1194ff821d4e86c17d41cb5562f3a276a8bcbfc9d1d"},
-]
-
-[[package]]
 name = "requests"
 version = "2.31.0"
 description = "Python HTTP for Humans."
@@ -2352,4 +2341,4 @@ resolved_reference = "a08f2b7e4567cdc50c0614ee0a4ffdff49b8b6e6"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "08d3f5dfbe1896006a6e79cae438a5a9e5bac3b6a03dbe049164102a2562a05b"
+content-hash = "842b85bf9c85f7168cb7c4effd7d7592bb3b3fed7808882e8528fc548ff994bc"
