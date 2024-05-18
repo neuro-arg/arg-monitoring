@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Neuro ARG monitoring</title>
     <link rel="stylesheet" href="./index.css" />
+    <link href="https://raw.githubusercontent.com/neuro-arg/arg-monitoring/publish/atom.xml" title="Neuro ARG Feed" rel="alternate" type="application/rss+xml" />
   </head>
   <body>
     <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
@@ -12,7 +13,20 @@
     <div>
       <div class="header">
         <h1>Neuro ARG monitoring page</h1>
-        <p>Welcome to this very basic webpage that monitors various resources in the Neuro ARG.</p>
+        <p>
+          Welcome to this very basic webpage that monitors various resources in the Neuro ARG. If you see "undefined" for all fields, you might have been rate-limited. Wait a few minutes.
+        </p>
+        <p>
+          Bookmarks:
+          <ol>
+            <li><a target="_blank" href="https://raw.githubusercontent.com/neuro-arg/arg-monitoring/publish/atom.xml">RSS Feed</a></li>
+            <li><a target="_blank" href="https://www.youtube.com/feeds/videos.xml?channel_id=UCqOK_pl0LS0e8Lp7HMRDZsw">YouTube Feed</a></li>
+            <li><a target="_blank" href="https://feeds.soundcloud.com/users/soundcloud:users:1258077262/sounds.rss">SoundCloud Feed</a></li>
+            <li><a target="_blank" href="https://drive.google.com/drive/folders/1qm6GSRlstTmjbyOFCuH1OhSmPK4pi4Aa?usp=drive_link">Docs</a></li>
+          </ol>
+        </p>
+
+        <b>All times are in GMT+0.</b>
         <p>Choose two dates to compare the resource states.</p>
         <p>The link is shareable. <a href="#" id="sharing-link">Copy Link</a></p>
       </div>
@@ -20,21 +34,21 @@
       <div class="date-selectors">
         <div>
           <label for="from-date">Choose a date:</label>
-          <input type="date" id="from-date" name="from-date" />
-          <button id="from-date-today">Today</button>
+          <input type="datetime-local" id="from-date" name="from-date" />
+          <button id="from-date-today">Now</button>
         </div>
 
         <div>
           <label for="to-date">Choose another date:</label>
-          <input type="date" id="to-date" name="to-date" />
-          <button id="to-date-today">Today</button>
+          <input type="datetime-local" id="to-date" name="to-date" />
+          <button id="to-date-today">Now</button>
         </div>
       </div>
 
       <div class="information">
         <p>Status: <span id="status"></span></p>
-        <p>From Commit: <span id="from-commit"></span></p>
-        <p>To Commit: <span id="to-commit"></span></p>
+        <p>From Commit: <a id="from-commit" target="_blank"></a></p>
+        <p>To Commit: <a id="to-commit" target="_blank"></a></p>
       </div>
 
       <div id="table-parent" class="tabular">
