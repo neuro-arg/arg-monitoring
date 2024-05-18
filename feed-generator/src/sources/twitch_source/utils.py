@@ -25,7 +25,7 @@ CROPPED_HEIGHT = int(EXPECTED_HEIGHT * CROP_RATIO_Y -
                      CROP_OFFSET_RATIO_Y * EXPECTED_HEIGHT)
 
 WHOSE_STREAM_SQUARE_NUMBER = 34
-DETECTOR_THRESHOLD = 0.85
+DETECTOR_THRESHOLD = 0.9
 
 
 def nparray_crop_frame(image_array: np.ndarray,
