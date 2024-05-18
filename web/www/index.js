@@ -20,11 +20,12 @@ const tableParent = document.getElementById('table-parent');
 const urlParams = new URLSearchParams(window.location.search);
 const fromDate = urlParams.get('fromDate');
 const toDate = urlParams.get('toDate');
-const dateNow = (new Date()).toISOString().split('T')[0];
+const dateNow = (new Date()).toISOString().split('.')[0];
 
 const tableHeaders = "<table id=\"resource-table\"><tr><th>Resource</th><th>Status</th><th>Previous State</th><th>Current State</th></tr>";
-
 const tableFooter = "</table>";
+
+const commitURL = "https://github.com/neuro-arg/arg-monitoring/commit/";
 
 // functions and stuff
 const updateTable = async () => {
@@ -40,6 +41,9 @@ const updateTable = async () => {
 
   fromCommitText.innerText = lhsCommit;
   toCommitText.innerText = rhsCommit;
+
+  fromCommitText.href = commitURL + lhsCommit;
+  toCommitText.href = commitURL + rhsCommit;
 
   // both states are expected to have all keys. Even if they aren't
   // in the original JSON, the WASM should have returned them as
@@ -85,14 +89,14 @@ if (!('URLSearchParams' in window)) {
 }
 
 if (fromDate && fromDate !== 'today') {
-  fromDateField.value = fromDate;
+  fromDateField.value = new Date(fromDate).toISOString().split('.')[0];
 } else {
   urlParams.set('fromDate', 'today');
   fromDateField.value = dateNow;
 }
 
 if (toDate && toDate !== 'today') {
-  toDateField.value = toDate;
+  toDateField.value = new Date(toDate).toISOString().split('.')[0];
 } else {
   urlParams.set('toDate', 'today');
   toDateField.value = dateNow;
