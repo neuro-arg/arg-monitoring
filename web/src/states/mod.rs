@@ -18,6 +18,7 @@ struct SoundCloudUserInformation {
     n_tracks: Option<u64>,
     n_following: Option<u64>,
     n_visuals: Option<u64>,
+    avatar: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
