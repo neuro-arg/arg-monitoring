@@ -219,6 +219,7 @@ if __name__ == '__main__':
         raise FileNotFoundError(
             f"The file {THRESHOLDS_FILE_EVIL} does not exist.")
 
+    tutel_ds = np.array(Image.open('detectors/tutel_detector.png'))
     neuro_ds = np.array(Image.open('detectors/neuro_detector.png'))
     evil_ds = np.array(Image.open('detectors/evil_detector.png'))
 
@@ -227,12 +228,13 @@ if __name__ == '__main__':
 
         FIRST_FRAME = read_one_frame(PROCESS)[0]
         DETECTED_STREAMER = whose_stream(FIRST_FRAME,
+                                         tutel_ds,
                                          neuro_ds,
                                          evil_ds,
                                          SQUARE_SIZE)
 
         print(f'This is {DETECTED_STREAMER}\'s stream')
-        assert DETECTED_STREAMER != 'dunno'
+        assert DETECTED_STREAMER not in ('dunno', 'tutel')
 
         IMAGES = load_images_from_directory(SRC_DIRECTORY_NEURO if
                                             DETECTED_STREAMER == 'neuro'

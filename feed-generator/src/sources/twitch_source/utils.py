@@ -233,6 +233,7 @@ def extract_dynamic_detector_square(frame: np.ndarray,
 
 
 def whose_stream(target: np.ndarray,
+                 tutel_detector_square: np.ndarray,
                  neuro_detector_square: np.ndarray,
                  evil_detector_square: np.ndarray,
                  square_size: int) -> Literal['neuro', 'evil', 'dunno']:
@@ -241,21 +242,28 @@ def whose_stream(target: np.ndarray,
 
     Args:
         target (np.ndarray): The target image
+        tutel_detector_square (np.ndarray): The tutel detector
         neuro_detector_square (np.ndarray): The neuro detector
         evil_detector_square (np.ndarray): The evil detector
         square_size (int): The size of the squares
 
     Returns:
-        Literal['neuro', 'evil', 'dunno']: The result
+        Literal['tutel', 'neuro', 'evil', 'dunno']: The result
     """
     square = target[:square_size, (WHOSE_STREAM_SQUARE_NUMBER - 1)
                     * square_size:
                     WHOSE_STREAM_SQUARE_NUMBER * square_size]
+    tutel_diff = calculate_rgb_diff(square, tutel_detector_square)
     neuro_diff = calculate_rgb_diff(square, neuro_detector_square)
     evil_diff = calculate_rgb_diff(square, evil_detector_square)
 
+    logging.info('Tutel diff: %s', tutel_diff)
     logging.info('Neuro diff: %s', neuro_diff)
     logging.info('Evil diff: %s', evil_diff)
+
+    if tutel_diff > neuro_diff and tutel_diff > evil_diff \
+       and tutel_diff > DETECTOR_THRESHOLD:
+        return 'tutel'
 
     if neuro_diff > evil_diff and neuro_diff > DETECTOR_THRESHOLD:
         return 'neuro'
