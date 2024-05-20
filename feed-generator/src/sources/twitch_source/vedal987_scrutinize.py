@@ -32,6 +32,7 @@ twitch_oauth = os.environ.get('TWITCH_OAUTH', None)
 twitch_username = 'vedal987'
 neuro_folder = './neuro'
 evil_folder = './evil'
+tutel_detector = np.array(Image.open('./detectors/tutel_detector.png'))
 neuro_detector = np.array(Image.open('./detectors/neuro_detector.png'))
 evil_detector = np.array(Image.open('./detectors/evil_detector.png'))
 neuro_thresholds = './neuro.npz'
@@ -58,8 +59,11 @@ while detected_streamers is None or len(detected_streamers) > 0:
          as process:
         first_frame = read_one_frame(process)[0]
         if detected_streamers is None:
-            detected_streamers = [whose_stream(first_frame, neuro_detector,
-                                               evil_detector, square_size)]
+            detected_streamers = [whose_stream(first_frame,
+                                               tutel_detector,
+                                               neuro_detector,
+                                               evil_detector,
+                                               square_size)]
 
         threshold_file = (neuro_thresholds if detected_streamers[0] == 'neuro'
                           else evil_thresholds)
@@ -67,6 +71,11 @@ while detected_streamers is None or len(detected_streamers) > 0:
                          else evil_folder)
 
         logger.info('Detected streamer: %s', detected_streamers[0])
+
+        if detected_streamers[0] == 'tutel':
+            logger.info(
+                'Tutel is streaming, no clue expected. Have a good stream!')
+            break
 
         if detected_streamers[0] == 'dunno':
             logger.warning('Could not determine the streamer, panic mode.')
