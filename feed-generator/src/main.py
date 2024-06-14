@@ -7,7 +7,8 @@ import json
 import logging
 import os
 import pickle
-from typing import Any, Optional
+import time
+from typing import Any, Callable, Optional
 from uuid import uuid4
 
 from feedgen.feed import FeedGenerator
@@ -18,12 +19,15 @@ from metadata.soundcloud_metadata import (SoundCloudUserGetter,
                                           SoundCloudUserInformation)
 from metadata.youtube_metadata import VideoInformation, VideoInformationGetter
 from metadata.ytc_metadata import ChannelInformation, ChannelInformationGetter
-from sources.youtube_source import YoutubeSource
 from sources.twitch_source import TwitchSource
+from sources.youtube_source import YoutubeSource
 
 logging.basicConfig(
     level=logging.INFO,
     format="[%(filename)s:%(lineno)s - %(funcName)s()] %(message)s")
+
+RETRY_NO = 5
+RETRY_INTERVAL = 30
 
 NUMBERS_1_URL = "https://www.youtube.com/watch?v=wc-QCoMm4J8"
 NUMBERS_2_URL = "https://www.youtube.com/watch?v=giJI-TDbO5k"
@@ -45,20 +49,32 @@ def get_video_info_and_content(url) -> tuple[VideoInformation, str]:
     """
     Gets video information and content
     """
-    info = VideoInformationGetter(url).get()
-    source = YoutubeSource(url).get()
+    info = while_none_retry_max(VideoInformationGetter(url).get)
+    source = while_none_retry_max(YoutubeSource(url).get)
 
-    return if_none_panic(info), if_none_panic(source)
+    return info, source
 
 
-def if_none_panic(x: Any | None) -> Any:
+def while_none_retry_max(fn: Callable[[], Any | None]) -> Any:
     """
-    Panics if x is None
+    While x is None, retries for a maximum of retry_no.
+
+    Args:
+        fn: The function to call
+
+    Returns:
+        The value of x
     """
-    if x is None:
-        raise RuntimeError("x is None")
-    else:
-        return x
+
+    for i in range(RETRY_NO):
+        x = fn()
+        if x is not None:
+            return x
+
+        logging.info("Operation failed, retrying %d/%d", (i + 1), RETRY_NO)
+        time.sleep(RETRY_INTERVAL)
+
+    raise RuntimeError("Operation failed after all retires")
 
 
 youtube_feed_getter = FeedGetter(
@@ -77,12 +93,12 @@ current_state = ArgState(
     *get_video_info_and_content(FILTERED_URL),
     *get_video_info_and_content(HELLO_WORLD_URL),
     *get_video_info_and_content(MEANING_OF_LIFE_URL),
-    if_none_panic(SoundCloudUserGetter(SOUNDCLOUD_URL).get()),
-    if_none_panic(youtube_feed_getter.get()),
-    if_none_panic(soundcloud_feed_getter.get()),
-    if_none_panic(TwitchSource('neuro').get()),
-    if_none_panic(TwitchSource('evil').get()),
-    if_none_panic(ChannelInformationGetter(YOUTUBE_CHANNEL_URL).get()),
+    while_none_retry_max(SoundCloudUserGetter(SOUNDCLOUD_URL).get),
+    while_none_retry_max(youtube_feed_getter.get),
+    while_none_retry_max(soundcloud_feed_getter.get),
+    while_none_retry_max(TwitchSource('neuro').get),
+    while_none_retry_max(TwitchSource('evil').get),
+    while_none_retry_max(ChannelInformationGetter(YOUTUBE_CHANNEL_URL).get),
 )
 
 cached_state: Optional[ArgState] = None
