@@ -41,7 +41,7 @@ jobs:
 
       - name: Delete old cache
         env:
-          CACHE_NAME: ${{ steps.arg-cache.outputs.cache-primary-key }}
+          CACHE_NAME: ${{ steps.restore-pickle-and-json.outputs.cache-primary-key }}
           REPO: ${{ github.repository }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -59,7 +59,7 @@ jobs:
           path: |
             atom.pickle
             cache.json
-          key: ${{ steps.arg-cache.outputs.cache-primary-key }}
+          key: ${{ steps.restore-pickle-and-json.outputs.cache-primary-key }}
 
       - name: Stash cache and atom
         run: |
