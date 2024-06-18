@@ -1029,9 +1029,13 @@ files = [
     {file = "lxml-5.2.2-cp36-cp36m-win_amd64.whl", hash = "sha256:edcfa83e03370032a489430215c1e7783128808fd3e2e0a3225deee278585196"},
     {file = "lxml-5.2.2-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:28bf95177400066596cdbcfc933312493799382879da504633d16cf60bba735b"},
     {file = "lxml-5.2.2-cp37-cp37m-manylinux_2_12_i686.manylinux2010_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:3a745cc98d504d5bd2c19b10c79c61c7c3df9222629f1b6210c0368177589fb8"},
+    {file = "lxml-5.2.2-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1b590b39ef90c6b22ec0be925b211298e810b4856909c8ca60d27ffbca6c12e6"},
     {file = "lxml-5.2.2-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b336b0416828022bfd5a2e3083e7f5ba54b96242159f83c7e3eebaec752f1716"},
+    {file = "lxml-5.2.2-cp37-cp37m-manylinux_2_28_aarch64.whl", hash = "sha256:c2faf60c583af0d135e853c86ac2735ce178f0e338a3c7f9ae8f622fd2eb788c"},
     {file = "lxml-5.2.2-cp37-cp37m-manylinux_2_28_x86_64.whl", hash = "sha256:4bc6cb140a7a0ad1f7bc37e018d0ed690b7b6520ade518285dc3171f7a117905"},
+    {file = "lxml-5.2.2-cp37-cp37m-musllinux_1_1_aarch64.whl", hash = "sha256:7ff762670cada8e05b32bf1e4dc50b140790909caa8303cfddc4d702b71ea184"},
     {file = "lxml-5.2.2-cp37-cp37m-musllinux_1_1_x86_64.whl", hash = "sha256:57f0a0bbc9868e10ebe874e9f129d2917750adf008fe7b9c1598c0fbbfdde6a6"},
+    {file = "lxml-5.2.2-cp37-cp37m-musllinux_1_2_aarch64.whl", hash = "sha256:a6d2092797b388342c1bc932077ad232f914351932353e2e8706851c870bca1f"},
     {file = "lxml-5.2.2-cp37-cp37m-musllinux_1_2_x86_64.whl", hash = "sha256:60499fe961b21264e17a471ec296dcbf4365fbea611bf9e303ab69db7159ce61"},
     {file = "lxml-5.2.2-cp37-cp37m-win32.whl", hash = "sha256:d9b342c76003c6b9336a80efcc766748a333573abf9350f4094ee46b006ec18f"},
     {file = "lxml-5.2.2-cp37-cp37m-win_amd64.whl", hash = "sha256:b16db2770517b8799c79aa80f4053cd6f8b716f21f8aca962725a9565ce3ee40"},
@@ -1926,15 +1930,15 @@ files = [
 
 [[package]]
 name = "streamlink"
-version = "6.7.4"
+version = "6.8.0"
 description = "Streamlink is a command-line utility that extracts streams from various services and pipes them into a video player of choice."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "streamlink-6.7.4-py3-none-any.whl", hash = "sha256:09c3e2c2e2c6b9f86bca1111a9323d328fc26e29ed6366d9a04683b0c7a35862"},
-    {file = "streamlink-6.7.4-py3-none-win32.whl", hash = "sha256:25e9e403101baba64bf28e1cbd703e7803415e6918680dbf83d78ed78d2684ec"},
-    {file = "streamlink-6.7.4-py3-none-win_amd64.whl", hash = "sha256:d777a2e034568c02d306ef95f5acb0b00b7030ebbca98bd9127ccc76c6e55eca"},
-    {file = "streamlink-6.7.4.tar.gz", hash = "sha256:9337537ab119fe77524a5d665aaecebbfb06e2cb8df28d1260d92876425751ce"},
+    {file = "streamlink-6.8.0-py3-none-any.whl", hash = "sha256:72c1e396d2e7aed68853800a371a573f31f1c3750950c785bd6a53599fe6cf9d"},
+    {file = "streamlink-6.8.0-py3-none-win32.whl", hash = "sha256:12c510d8ed00261929fce7c4a5eb5f032e652fdaceb432cc2c6b6f66626b39d7"},
+    {file = "streamlink-6.8.0-py3-none-win_amd64.whl", hash = "sha256:85104a82f877e447de1caf0de6989442bac6b78d4d3fffdc5df21227838a590e"},
+    {file = "streamlink-6.8.0.tar.gz", hash = "sha256:2f914d28a7c94f6b2059ed08a4b49ff6f877ccb9b80851136382107060a91723"},
 ]
 
 [package.dependencies]
@@ -2341,4 +2345,4 @@ resolved_reference = "0153b387e57e0bb8e580f1869f85596d2767fb0d"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "2fe02196b7717280043cb3f14c9ce7ad43219ed874e8a91685b984708dde70f6"
+content-hash = "a9bcb7bc5bd5f2e0e9fa2d3dfa00271b77a01a4f5f5d29a5a129363b7d4579c7"
