@@ -1,0 +1,7 @@
+[package]
+name = "audio-monitoring"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pleep = { git = "https://github.com/owobred/pleep.git", sha = "4529e8c" }
