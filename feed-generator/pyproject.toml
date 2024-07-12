@@ -20,7 +20,7 @@ scikit-image = "^0.24.0"
 matplotlib = "^3.9.1"
 twitchapi = "^4.2.1"
 pygithub = "^2.3.0"
-streamlink = "^6.8.2"
+streamlink = "^6.8.3"
 
 [tool.poetry.dev-dependencies]
 types-pillow = "*"
