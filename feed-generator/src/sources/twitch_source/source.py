@@ -29,7 +29,7 @@ class TwitchSource:
             logging.info("Retrieving information for %s", self.who)
             response = requests.get(
                 "https://raw.githubusercontent.com/neuro-arg/"
-                f"arg-monitoring/publish/{self.who}.json", timeout=5)
+                f"arg-monitoring/publish/{self.who}.txt", timeout=5)
 
             if response.status_code == 404:
                 logging.info(

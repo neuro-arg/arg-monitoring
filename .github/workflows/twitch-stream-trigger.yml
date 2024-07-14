@@ -9,6 +9,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Download executable
+        working-directory: ./feed-generator/src/sources/twitch_source
+        run: |
+          wget https://github.com/neuro-arg/arg-monitoring/releases/download/audio-monitoring-live/audio-monitoring
+          wget https://github.com/neuro-arg/arg-monitoring/releases/download/audio-monitoring-live/out.bin
+          chmod +x audio-monitoring
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -33,16 +40,16 @@ jobs:
           TWITCH_OAUTH: ${{ secrets.TWITCH_OAUTH }}
         run: |
           cd feed-generator/src/sources/twitch_source
-          python vedal987_scrutinize.py || true
+          ./audio-monitoring || true
           cd -
-          cp feed-generator/src/sources/twitch_source/*.json .
+          cp feed-generator/src/sources/twitch_source/*.txt .
 
       - name: Stash results
         run: |
           git config --local user.email "worker@github.com"
           git config --local user.name "Twitch Worker"
-          git add -f neuro.json || true
-          git add -f evil.json || true
+          git add -f neuro.txt || true
+          git add -f evil.txt || true
           git stash -m "generated changes"
 
       - name: Checkout to publish
@@ -52,12 +59,12 @@ jobs:
 
       - name: Add a commit (only if there are changes)
         run: |
-          git rm neuro.json || true
-          git rm evil.json || true
+          git rm neuro.txt || true
+          git rm evil.txt || true
           git stash apply
-          git add -f neuro.json || git checkout HEAD -- neuro.json
-          git add -f evil.json || git checkout HEAD -- evil.json
-          git commit -m "Update Twitch JSON" || true
+          git add -f neuro.txt || git checkout HEAD -- neuro.txt
+          git add -f evil.txt || git checkout HEAD -- evil.txt
+          git commit -m "Update Twitch TXT" || true
           git log
 
       - name: Push new commit

@@ -137,6 +137,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
 
 [[package]]
+name = "bytes"
+version = "1.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "514de17de45fdb8dc022b1a7975556c53c86f9f0aa5f534b98977b171857c2c9"
+
+[[package]]
 name = "cc"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -501,7 +507,7 @@ checksum = "bda66fc9667c18cb2758a2ac84d1167245054bcf85d5d1aaa6923f45801bdd02"
 [[package]]
 name = "pleep"
 version = "0.1.0"
-source = "git+https://github.com/owobred/pleep.git#5632c1deb4c41582eb010532f0eb0bf6da83c753"
+source = "git+https://github.com/owobred/pleep.git?rev=3aabd5a#3aabd5ae52a854899c0d6495c804e696f8e14a5f"
 dependencies = [
  "num-complex",
  "num-traits",
@@ -512,7 +518,7 @@ dependencies = [
 [[package]]
 name = "pleep-audio"
 version = "0.1.0"
-source = "git+https://github.com/owobred/pleep.git#5632c1deb4c41582eb010532f0eb0bf6da83c753"
+source = "git+https://github.com/owobred/pleep.git?rev=3aabd5a#3aabd5ae52a854899c0d6495c804e696f8e14a5f"
 dependencies = [
  "rubato",
  "symphonia",
@@ -523,11 +529,10 @@ dependencies = [
 [[package]]
 name = "pleep-build"
 version = "0.1.0"
-source = "git+https://github.com/owobred/pleep.git#5632c1deb4c41582eb010532f0eb0bf6da83c753"
+source = "git+https://github.com/owobred/pleep.git?rev=3aabd5a#3aabd5ae52a854899c0d6495c804e696f8e14a5f"
 dependencies = [
  "clap",
  "crossbeam",
- "image",
  "pleep",
  "pleep-audio",
  "rayon",
@@ -539,9 +544,10 @@ dependencies = [
 [[package]]
 name = "pleep-search"
 version = "0.1.0"
-source = "git+https://github.com/owobred/pleep.git#5632c1deb4c41582eb010532f0eb0bf6da83c753"
+source = "git+https://github.com/owobred/pleep.git?rev=3aabd5a#3aabd5ae52a854899c0d6495c804e696f8e14a5f"
 dependencies = [
  "clap",
+ "image",
  "pleep",
  "pleep-audio",
  "pleep-build",
@@ -971,6 +977,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba4f4a02a7a80d6f274636f0aa95c7e383b912d41fe721a31f29e29698585a4a"
 dependencies = [
  "backtrace",
+ "bytes",
  "libc",
  "mio",
  "num_cpus",

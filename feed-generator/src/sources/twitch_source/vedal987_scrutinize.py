@@ -25,11 +25,6 @@ logger = logging.getLogger(__name__)
 # This entire script is like a main script, ignore capitalization rules
 
 # Constants
-if 'TWITCH_OAUTH' not in os.environ:
-    logger.warning('No Twitch OAuth token, might lose some video data!')
-
-twitch_oauth = os.environ.get('TWITCH_OAUTH', None)
-twitch_username = 'vedal987'
 neuro_folder = './neuro'
 evil_folder = './evil'
 tutel_detector = np.array(Image.open('./detectors/tutel_detector.png'))
@@ -42,20 +37,18 @@ depth = 3
 
 # NOTE: FPS is forcefully tuned down to 30. Not sure if this affects accuracy
 # but it improves inference performance
-oauth_flag = ' ' if twitch_oauth is None \
-    else f' "--twitch-api-header=Authorization=OAuth {twitch_oauth}" '
-command = ('streamlink --twitch-disable-ads --twitch-low-latency'
-           + ' --hls-live-restart'  # start from the beginning
-           + oauth_flag
-           + f'https://www.twitch.tv/{twitch_username} best -O | '
-           'ffmpeg -i - -vf "scale=1280:720,fps=30" -c:v ppm -f image2pipe -')
+command = ('ffmpeg -i - -vf "scale=1280:720,fps=30" -c:v ppm -f image2pipe -')
+
 detected_streamers = None
 
 if __name__ != '__main__':
     raise ImportError('This script is meant to be run as a main script.')
 
+scrutinize_results = []
+
 while detected_streamers is None or len(detected_streamers) > 0:
-    with subprocess.Popen(command, shell=True, stdout=subprocess.PIPE) \
+    with subprocess.Popen(command, shell=True, stdin=sys.stdin,
+                          stdout=subprocess.PIPE) \
          as process:
         first_frame = read_one_frame(process)[0]
         if detected_streamers is None:
@@ -96,8 +89,12 @@ while detected_streamers is None or len(detected_streamers) > 0:
         results = scrutinize_with_images_and_thresholds(
             process, images, thresholds, detector_square)
 
-        with open(f'{detected_streamers[0]}.json', 'w',
-                  encoding='utf8') as file:
-            json.dump(results, file)
+        # with open(f'{detected_streamers[0]}.json', 'w',
+        #           encoding='utf8') as file:
+        res = json.dumps(results)
+        scrutinize_results.append({'streamer': detected_streamers[0], 'result': res})
 
         detected_streamers.pop(0)
+
+logger.info('Sending this json to stdout: %s', json.dumps(scrutinize_results))
+print(json.dumps(scrutinize_results))

@@ -112,13 +112,13 @@ frozenlist = ">=1.1.0"
 
 [[package]]
 name = "astroid"
-version = "3.2.2"
+version = "3.2.3"
 description = "An abstract syntax tree for Python with inference support."
 optional = false
 python-versions = ">=3.8.0"
 files = [
-    {file = "astroid-3.2.2-py3-none-any.whl", hash = "sha256:e8a0083b4bb28fcffb6207a3bfc9e5d0a68be951dd7e336d5dcf639c682388c0"},
-    {file = "astroid-3.2.2.tar.gz", hash = "sha256:8ead48e31b92b2e217b6c9733a21afafe479d52d6e164dd25fb1a770c7c3cf94"},
+    {file = "astroid-3.2.3-py3-none-any.whl", hash = "sha256:3eae9ea67c11c858cdd2c91337d2e816bd019ac897ca07d7b346ac10105fceb3"},
+    {file = "astroid-3.2.3.tar.gz", hash = "sha256:7099b5a60985529d8d46858befa103b82d0d05a5a5e8b816b5303ed96075e1d9"},
 ]
 
 [package.dependencies]
@@ -541,13 +541,13 @@ profile = ["gprof2dot (>=2022.7.29)"]
 
 [[package]]
 name = "exceptiongroup"
-version = "1.2.1"
+version = "1.2.2"
 description = "Backport of PEP 654 (exception groups)"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "exceptiongroup-1.2.1-py3-none-any.whl", hash = "sha256:5258b9ed329c5bbdd31a309f53cbfb0b155341807f6ff7606a1e801a891b29ad"},
-    {file = "exceptiongroup-1.2.1.tar.gz", hash = "sha256:a4785e48b045528f5bfe627b6ad554ff32def154f42372786903b7abcfe1aa16"},
+    {file = "exceptiongroup-1.2.2-py3-none-any.whl", hash = "sha256:3111b9d131c238bec2f8f516e123e14ba243563fb135d3fe885990585aa7795b"},
+    {file = "exceptiongroup-1.2.2.tar.gz", hash = "sha256:47c2edf7c6738fafb49fd34290706d1a1a2f4d1c6df275526b62cbb4aa5393cc"},
 ]
 
 [package.extras]
@@ -1951,15 +1951,15 @@ files = [
 
 [[package]]
 name = "streamlink"
-version = "6.8.2"
+version = "6.8.3"
 description = "Streamlink is a command-line utility that extracts streams from various services and pipes them into a video player of choice."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "streamlink-6.8.2-py3-none-any.whl", hash = "sha256:bd75970556999c856aeb619ca8e7a6da2cbf07720dbfeb8d543f86a4469e8246"},
-    {file = "streamlink-6.8.2-py3-none-win32.whl", hash = "sha256:299502f884aa4c821b7b5713377cdc6c90c46e1735a88b5eee12b06b40013cf9"},
-    {file = "streamlink-6.8.2-py3-none-win_amd64.whl", hash = "sha256:a5b3b32acb7bbec398184299c6e06786a87fd5b2159ff63d905c1c5762600f69"},
-    {file = "streamlink-6.8.2.tar.gz", hash = "sha256:9c1b66f024727a270faf0026d71a7e63abdd88f102957ca152c0d2620717bc98"},
+    {file = "streamlink-6.8.3-py3-none-any.whl", hash = "sha256:eab8a64ccba0f18c4df6abcf8078d5835dd6f541e3ccb657ad919e413a1e5450"},
+    {file = "streamlink-6.8.3-py3-none-win32.whl", hash = "sha256:70602f59e7ad90a9a71a798083c9db6a7453f36366178ea07a98a9cb77820c02"},
+    {file = "streamlink-6.8.3-py3-none-win_amd64.whl", hash = "sha256:67a97d5d4a924ffc5d2f60f811888eef63545112856282f0b81b8264fa8a3b20"},
+    {file = "streamlink-6.8.3.tar.gz", hash = "sha256:e3f51a567c08703092f91d0497a3fc2aefe327efcd725d03e66f3dcd11ed9b68"},
 ]
 
 [package.dependencies]
@@ -2007,13 +2007,13 @@ files = [
 
 [[package]]
 name = "tomlkit"
-version = "0.12.5"
+version = "0.13.0"
 description = "Style preserving TOML library"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "tomlkit-0.12.5-py3-none-any.whl", hash = "sha256:af914f5a9c59ed9d0762c7b64d3b5d5df007448eb9cd2edc8a46b1eafead172f"},
-    {file = "tomlkit-0.12.5.tar.gz", hash = "sha256:eef34fba39834d4d6b73c9ba7f3e4d1c417a4e56f89a7e96e090dd0d24b8fb3c"},
+    {file = "tomlkit-0.13.0-py3-none-any.whl", hash = "sha256:7075d3042d03b80f603482d69bf0c8f345c2b30e41699fd8883227f89972b264"},
+    {file = "tomlkit-0.13.0.tar.gz", hash = "sha256:08ad192699734149f5b97b45f1f18dad7eb1b6d16bc72ad0c2335772650d7b72"},
 ]
 
 [[package]]
@@ -2081,13 +2081,13 @@ files = [
 
 [[package]]
 name = "types-requests"
-version = "2.32.0.20240622"
+version = "2.32.0.20240712"
 description = "Typing stubs for requests"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "types-requests-2.32.0.20240622.tar.gz", hash = "sha256:ed5e8a412fcc39159d6319385c009d642845f250c63902718f605cd90faade31"},
-    {file = "types_requests-2.32.0.20240622-py3-none-any.whl", hash = "sha256:97bac6b54b5bd4cf91d407e62f0932a74821bc2211f22116d9ee1dd643826caf"},
+    {file = "types-requests-2.32.0.20240712.tar.gz", hash = "sha256:90c079ff05e549f6bf50e02e910210b98b8ff1ebdd18e19c873cd237737c1358"},
+    {file = "types_requests-2.32.0.20240712-py3-none-any.whl", hash = "sha256:f754283e152c752e46e70942fa2a146b5bc70393522257bb85bd1ef7e019dcc3"},
 ]
 
 [package.dependencies]
@@ -2361,7 +2361,7 @@ develop = false
 type = "git"
 url = "https://github.com/ytdl-org/youtube-dl.git"
 reference = "master"
-resolved_reference = "37cea84f775129ad715b9bcd617251c831fcc980"
+resolved_reference = "16f5bbc464602773e61eeafef51d1dbc47987bb4"
 
 [metadata]
 lock-version = "2.0"
