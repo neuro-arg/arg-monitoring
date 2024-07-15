@@ -40,7 +40,7 @@ jobs:
           TWITCH_OAUTH: ${{ secrets.TWITCH_OAUTH }}
         run: |
           cd feed-generator/src/sources/twitch_source
-          ./audio-monitoring || true
+          RUST_LOG=info ./audio-monitoring || true
           cd -
           cp feed-generator/src/sources/twitch_source/*.txt .
 
@@ -62,8 +62,8 @@ jobs:
           git rm neuro.txt || true
           git rm evil.txt || true
           git stash apply
-          git add -f neuro.txt || git checkout HEAD -- neuro.txt
-          git add -f evil.txt || git checkout HEAD -- evil.txt
+          git add -f neuro.txt || git checkout HEAD -- neuro.txt || true
+          git add -f evil.txt || git checkout HEAD -- evil.txt || true
           git commit -m "Update Twitch TXT" || true
           git log
 
