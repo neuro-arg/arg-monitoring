@@ -35,7 +35,7 @@ evil_thresholds = './evil.npz'
 square_size = 20
 depth = 3
 
-# NOTE: FPS is forcefully tuned down to 30. Not sure if this affects accuracy
+# NOTE: FPS is forcefully tuned down to 30. Not sure if this affects accuracy,
 # but it improves inference performance
 command = ('ffmpeg -i - -vf "scale=1280:720,fps=30" -c:v ppm -f image2pipe -')
 
@@ -89,10 +89,9 @@ while detected_streamers is None or len(detected_streamers) > 0:
         results = scrutinize_with_images_and_thresholds(
             process, images, thresholds, detector_square)
 
-        # with open(f'{detected_streamers[0]}.json', 'w',
-        #           encoding='utf8') as file:
         res = json.dumps(results)
-        scrutinize_results.append({'streamer': detected_streamers[0], 'result': res})
+        scrutinize_results.append({'streamer': detected_streamers[0],
+                                   'result': res})
 
         detected_streamers.pop(0)
 

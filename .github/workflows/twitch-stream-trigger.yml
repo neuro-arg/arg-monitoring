@@ -12,7 +12,7 @@ jobs:
       - name: Download executable
         working-directory: ./feed-generator/src/sources/twitch_source
         run: |
-          wget https://github.com/neuro-arg/arg-monitoring/releases/download/audio-monitoring-live/audio-monitoring
+          wget https://github.com/owobred/pleep/releases/download/latest/pleep-search
           wget https://github.com/neuro-arg/arg-monitoring/releases/download/audio-monitoring-live/out.bin
           chmod +x audio-monitoring
 
@@ -31,7 +31,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update && sudo apt-get install ffmpeg libsm6 libxext6 -y
+          sudo apt-get update && sudo apt-get install ffmpeg libsm6 libxext6 jq -y
           python -m pip install --upgrade pip
           python -m pip install ./feed-generator
 
@@ -40,7 +40,7 @@ jobs:
           TWITCH_OAUTH: ${{ secrets.TWITCH_OAUTH }}
         run: |
           cd feed-generator/src/sources/twitch_source
-          RUST_LOG=info ./audio-monitoring || true
+          ./monitoring.sh || true
           cd -
           cp feed-generator/src/sources/twitch_source/*.txt .
 
