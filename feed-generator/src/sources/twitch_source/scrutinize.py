@@ -129,32 +129,33 @@ def read_one_frame(
 
 def scrutinize_with_images_and_thresholds(  # pylint: disable=too-many-locals
         process: subprocess.Popen,
-        images: list[SourceImageTuple],
-        thresholds: np.ndarray,
-        detector_square: np.ndarray,
-) -> list[bool]:
+        images_array: list[list[SourceImageTuple]],
+        thresholds_array: list[np.ndarray],
+        detector_squares: list[np.ndarray],
+) -> list[list[bool]]:
     """
     Scrutinize the frames of a process. The process must output images
     in PPM file format within stdout.
 
     Args:
         process (subprocess.Popen): The process
-        images (list[SourceImageTuple]): The images
-        thresholds (np.ndarray): The thresholds
-        np.ndarray: The detector square. If this square is no longer
-                    detected, the function will stop
+        images_array (list[list[SourceImageTuple]]): The images
+        thresholds_array (list[np.ndarray]): The thresholds
+        detector_squares (np.ndarray): The detector square. If this square is no longer
+                                       detected, the function will stop
 
     Returns:
-        list[bool]: A list of booleans. If true, it means that the
-                    square has been found in the stream
-                    somewhere. False otherwise
+        list[list[bool]]: A list of booleans. If true, it means that the
+                          square has been found in the stream
+                          somewhere. False otherwise
     """
     assert process.stdout is not None
 
     start_time = time.time()
-    ssim_scores = [-1.0] * len(images)
+    ssim_scores_array = [[-1.0] * len(images) for images in images_array]
     ssim_mismatch_time = None  # This is init once for optimization purposes
-    while process.poll() is None:
+    intent_to_quit = False
+    while process.poll() is None and not intent_to_quit:
         if time.time() - start_time > 1800:
             logging.warning('Monitoring timeout. Might want to alert the dev.')
             break
@@ -164,32 +165,40 @@ def scrutinize_with_images_and_thresholds(  # pylint: disable=too-many-locals
         except StopIteration:
             break
 
-        if calculate_ssim(
-                extract_dynamic_detector_square(image_array, SQUARE_SIZE),
-                detector_square) < DETECTOR_THRESHOLD:
-            if ssim_mismatch_time is None:
-                ssim_mismatch_time = time.time()
-                logging.info('Detector square not found! Grace period started.')
-            elif time.time() - ssim_mismatch_time > 5:
-                logging.info('Detector square not found after 5 seconds.')
-                break
-        elif ssim_mismatch_time is not None:
-            logging.info('Detector square recovered after lost for %d seconds',
-                         time.time() - ssim_mismatch_time)
-            ssim_mismatch_time = None
+        for idx, image in enumerate(images_array):
+            if calculate_ssim(
+                    extract_dynamic_detector_square(image_array, SQUARE_SIZE),
+                    detector_squares[idx]) < DETECTOR_THRESHOLD:
+                if ssim_mismatch_time is None:
+                    ssim_mismatch_time = time.time()
+                    logging.info('Detector square not found! Grace period started.')
+                elif time.time() - ssim_mismatch_time > 5:
+                    logging.info('Detector square not found after 5 seconds.')
+                    intent_to_quit = True
+                    break
+            elif ssim_mismatch_time is not None:
+                logging.info('Detector square recovered after lost for %d seconds',
+                             time.time() - ssim_mismatch_time)
+                ssim_mismatch_time = None
 
         image_array = nparray_crop_frame(image_array, height, width)
         segments = nparray_segment_into_squares(image_array, SQUARE_SIZE)
 
-        ssim_results = map(process_squares_with_target_image,
-                           ((segments, tuple) for tuple in images))
-        ssim_scores = [max(x, y) for x, y in zip(ssim_scores, ssim_results)]
+        ssim_results_array = [map(process_squares_with_target_image,
+                                  ((segments, tuple) for tuple in images))
+                              for images in images_array]
+        ssim_scores_array = [[max(x, y) for x, y in zip(ssim_scores, ssim_results)]
+                             for (ssim_scores, ssim_results)
+                             in zip(ssim_scores_array, ssim_results_array)]
 
     results = []
-    logging.info('SSIM scores: %s', [float(score) for score in ssim_scores])
-    for idx, score in enumerate(ssim_scores):
-        mean, mini = thresholds[idx]
-        results.append(bool(score + (mean - mini) >= mean))
+    logging.info('SSIM scores: %s', [[float(score) for score in ssim_scores] for ssim_scores in ssim_scores_array])
+    for jdx, ssim_scores in enumerate(ssim_scores_array):
+        intermediary = []
+        for idx, score in enumerate(ssim_scores):
+            mean, mini = thresholds_array[jdx][idx]
+            intermediary.append(bool(score + (mean - mini) >= mean))
+        results.append(intermediary)
     return results
 
 
@@ -246,7 +255,7 @@ if __name__ == '__main__':
         assert len(IMAGES) == len(THRESHOLDS)
 
         RESULTS = scrutinize_with_images_and_thresholds(
-            PROCESS, IMAGES, THRESHOLDS,
-            extract_dynamic_detector_square(FIRST_FRAME, SQUARE_SIZE)
+            PROCESS, [IMAGES], [THRESHOLDS],
+            [extract_dynamic_detector_square(FIRST_FRAME, SQUARE_SIZE)]
         )
         print(RESULTS)

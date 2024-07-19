@@ -46,54 +46,63 @@ if __name__ != '__main__':
 
 scrutinize_results = []
 
-while detected_streamers is None or len(detected_streamers) > 0:
-    with subprocess.Popen(command, shell=True, stdin=sys.stdin,
-                          stdout=subprocess.PIPE) \
-         as process:
-        first_frame = read_one_frame(process)[0]
-        if detected_streamers is None:
-            detected_streamers = [whose_stream(first_frame,
-                                               tutel_detector,
-                                               neuro_detector,
-                                               evil_detector,
-                                               square_size)]
+process = subprocess.Popen(command, shell=True, stdin=sys.stdin,
+                           stdout=subprocess.PIPE)
 
-        threshold_file = (neuro_thresholds if detected_streamers[0] == 'neuro'
-                          else evil_thresholds)
-        images_folder = (neuro_folder if detected_streamers[0] == 'neuro'
-                         else evil_folder)
+first_frame = read_one_frame(process)[0]
+if detected_streamers is None:
+    detected_streamers = [whose_stream(first_frame,
+                                       tutel_detector,
+                                       neuro_detector,
+                                       evil_detector,
+                                       square_size)]
 
-        logger.info('Detected streamer: %s', detected_streamers[0])
+logger.info('Detected streamer: %s', detected_streamers[0])
 
-        if detected_streamers[0] == 'tutel':
-            logger.info(
-                'Tutel is streaming, no clue expected. Have a good stream!')
-            break
+if detected_streamers[0] == 'tutel':
+    logger.info(
+        'Tutel is streaming, no clue expected. Have a good stream!')
+    sys.exit(0)
 
-        if detected_streamers[0] == 'dunno':
-            logger.warning('Could not determine the streamer, panic mode.')
-            logger.warning(
-                'Panic mode will produce results for both streamers')
-            detected_streamers = ['neuro', 'evil']
+if detected_streamers[0] == 'dunno':
+    logger.warning('Could not determine the streamer, panic mode.')
+    logger.warning(
+        'Panic mode will produce results for both streamers')
+    detected_streamers = ['neuro', 'evil']
 
-        logging.info('Now processing for %s', detected_streamers[0])
-        images = load_images_from_directory(images_folder)
-        thresholds = load_thresholds(threshold_file)
-        detector_square = extract_dynamic_detector_square(first_frame,
-                                                          square_size)
 
-        if len(images) != len(thresholds):
-            logger.fatal('Mismatch between images and thresholds')
-            sys.exit(1)
+images_array = []
+thresholds_array = []
+detector_squares = []
 
-        results = scrutinize_with_images_and_thresholds(
-            process, images, thresholds, detector_square)
+for detected_streamer in detected_streamers:
+    threshold_file = (neuro_thresholds if detected_streamer == 'neuro'
+                      else evil_thresholds)
+    images_folder = (neuro_folder if detected_streamer == 'neuro'
+                     else evil_folder)
+    logging.info('Now processing for %s', detected_streamer)
+    images = load_images_from_directory(images_folder)
+    thresholds = load_thresholds(threshold_file)
+    detector_square = extract_dynamic_detector_square(first_frame,
+                                                      square_size)
 
-        res = json.dumps(results)
-        scrutinize_results.append({'streamer': detected_streamers[0],
-                                   'result': res})
+    if len(images) != len(thresholds):
+        logger.fatal('Mismatch between images and thresholds')
+        sys.exit(1)
 
-        detected_streamers.pop(0)
+    images_array.append(images)
+    thresholds_array.append(thresholds)
+    detector_squares.append(detector_square)
+
+
+results = scrutinize_with_images_and_thresholds(
+    process, images_array, thresholds_array, detector_squares)
+
+for idx, detected_streamer in enumerate(detected_streamers):
+    res = json.dumps(results[idx])
+    scrutinize_results.append({'streamer': detected_streamer,
+                               'result': res})
+
 
 logger.info('Sending this json to stdout: %s', json.dumps(scrutinize_results))
 print(json.dumps(scrutinize_results))
