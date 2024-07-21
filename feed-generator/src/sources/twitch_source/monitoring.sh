@@ -35,16 +35,15 @@ for file in $REQUIRED_FILES; do
     fi
 done
 
-STREAMLINK_ARGS=""
+OAUTH_HEADER=""
 if [ -n "$TWITCH_OAUTH" ]; then
     echo "Have Twitch token, will skip ads"
-    STREAMLINK_ARGS+="--twitch-api-header=Authorization=OAuth $TWITCH_OAUTH"
+    OAUTH_HEADER="--twitch-api-header=Authorization=OAuth=$TWITCH_OAUTH"
 else
     echo "No Twitch token, cannot skip ads"
 fi
-STREAMLINK_ARGS+=" --stdout $STREAMLINK_VIDEO_AND_QUALITY"
 
-streamlink $STREAMLINK_ARGS | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
+streamlink --stdout $OAUTH_HEADER $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
 
 AUDIO_JSON=$(RUST_LOG=info ./pleep-search --json out.bin $TEMP_RESULT_WAV | python3 audio_threshold_parser.py)
 
