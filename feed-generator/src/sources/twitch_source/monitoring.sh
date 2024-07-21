@@ -2,10 +2,8 @@
 # Bash script that listens to a stream, redirects the video to vedal987_scrutinize.py, and audio to pleep-search
 # Definitely not scuffed
 
-STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/vedal987 best"
-# STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/videos/2199274029 source"
-# STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/videos/2201876040 best"
-# STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/videos/2202764273 best"
+# STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/vedal987 best"
+STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/videos/2203633526 best"
 TEMP_RESULT_JSON="temp_result.json"
 TEMP_RESULT_WAV="for_pleep.wav"
 REQUIRED_PROGRAMS="streamlink ffmpeg python3 jq"
@@ -16,8 +14,8 @@ trap quit_program INT
 
 quit_program() {
     echo "Quitting..."
-    # rm -f $TEMP_RESULT_JSON
-    # rm -f $TEMP_RESULT_WAV
+    rm -f $TEMP_RESULT_JSON
+    rm -f $TEMP_RESULT_WAV
     exit 0
 }
 
@@ -39,9 +37,12 @@ done
 
 STREAMLINK_ARGS=""
 if [ -n "$TWITCH_OAUTH" ]; then
-  STREAMLINK_ARGS+="--twitch-api-header=Authorization=OAuth $TWITCH_OAUTH"
+    echo "Have Twitch token, will skip ads"
+    STREAMLINK_ARGS+="--twitch-api-header=Authorization=OAuth $TWITCH_OAUTH"
+else
+    echo "No Twitch token, cannot skip ads"
 fi
-STREAMLINK_ARGS="--stdout $STREAMLINK_VIDEO_AND_QUALITY"
+STREAMLINK_ARGS+=" --stdout $STREAMLINK_VIDEO_AND_QUALITY"
 
 streamlink $STREAMLINK_ARGS | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
 
