@@ -34,15 +34,15 @@ for file in $REQUIRED_FILES; do
     fi
 done
 
-OAUTH_HEADER=""
+# NOTE: I couldn't think of another way to do this without it not
+# recognizing "Authorization=OAuth $TWITCH_OAUTH" as one argument
 if [ -n "$TWITCH_OAUTH" ]; then
     echo "Have Twitch token, will skip ads"
-    OAUTH_HEADER="--twitch-api-header=Authorization=OAuth=$TWITCH_OAUTH"
+    streamlink --stdout --hls-live-restart --twitch-low-latency --twitch-api-header "Authorization=OAuth $TWITCH_OAUTH" $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
 else
     echo "No Twitch token, cannot skip ads"
+    streamlink --stdout --hls-live-restart --twitch-low-latency $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
 fi
-
-streamlink --stdout $OAUTH_HEADER $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
 
 AUDIO_JSON=$(RUST_LOG=info ./pleep-search --json out.bin $TEMP_RESULT_WAV | python3 audio_threshold_parser.py)
 
