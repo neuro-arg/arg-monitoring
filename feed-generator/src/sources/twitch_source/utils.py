@@ -275,12 +275,12 @@ def whose_stream(target: np.ndarray,
 
     if tutel_diff > neuro_diff and tutel_diff > evil_diff \
        and tutel_diff > DETECTOR_THRESHOLD:
-        return 'tutel', (tutel_idx + 100) * 0.01
+        return 'tutel', 1.0
 
     if neuro_diff > evil_diff and neuro_diff > DETECTOR_THRESHOLD:
-        return 'neuro', (neuro_idx + 100) * 0.01
+        return 'neuro', 1.0
 
     if evil_diff > neuro_diff and evil_diff > DETECTOR_THRESHOLD:
-        return 'evil', (evil_idx + 100) * 0.01
+        return 'evil', 1.0
 
     return 'dunno', 1.0
