@@ -132,6 +132,7 @@ def scrutinize_with_images_and_thresholds(  # pylint: disable=too-many-locals
         images_array: list[list[SourceImageTuple]],
         thresholds_array: list[np.ndarray],
         detector_squares: list[np.ndarray],
+        adjustment_value: list[float],
 ) -> list[list[bool]]:
     """
     Scrutinize the frames of a process. The process must output images
@@ -143,6 +144,7 @@ def scrutinize_with_images_and_thresholds(  # pylint: disable=too-many-locals
         thresholds_array (list[np.ndarray]): The thresholds
         detector_squares (np.ndarray): The detector square. If this square is no longer
                                        detected, the function will stop
+        adjustment_value (list[float]): The adjustment value
 
     Returns:
         list[list[bool]]: A list of booleans. If true, it means that the
@@ -165,6 +167,7 @@ def scrutinize_with_images_and_thresholds(  # pylint: disable=too-many-locals
         except StopIteration:
             break
 
+        image_array = (image_array * adjustment_value).astype(np.uint8)
         for idx, image in enumerate(images_array):
             if calculate_ssim(
                     extract_dynamic_detector_square(image_array, SQUARE_SIZE),
@@ -236,11 +239,11 @@ if __name__ == '__main__':
         assert PROCESS is not None
 
         FIRST_FRAME = read_one_frame(PROCESS)[0]
-        DETECTED_STREAMER = whose_stream(FIRST_FRAME,
-                                         tutel_ds,
-                                         neuro_ds,
-                                         evil_ds,
-                                         SQUARE_SIZE)
+        DETECTED_STREAMER, ADJUSTMENT_VALUE = whose_stream(FIRST_FRAME,
+                                                           tutel_ds,
+                                                           neuro_ds,
+                                                           evil_ds,
+                                                           SQUARE_SIZE)
 
         print(f'This is {DETECTED_STREAMER}\'s stream')
         assert DETECTED_STREAMER not in ('dunno', 'tutel')
@@ -256,6 +259,7 @@ if __name__ == '__main__':
 
         RESULTS = scrutinize_with_images_and_thresholds(
             PROCESS, [IMAGES], [THRESHOLDS],
-            [extract_dynamic_detector_square(FIRST_FRAME, SQUARE_SIZE)]
+            [extract_dynamic_detector_square(FIRST_FRAME, SQUARE_SIZE)],
+            ADJUSTMENT_VALUE
         )
         print(RESULTS)

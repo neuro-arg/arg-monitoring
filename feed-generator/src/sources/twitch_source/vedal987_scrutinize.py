@@ -50,6 +50,7 @@ process = subprocess.Popen(command, shell=True, stdin=sys.stdin,
                            stdout=subprocess.PIPE)
 
 first_frame = read_one_frame(process)[0]
+
 if detected_streamers is None:
     detected_streamers = [whose_stream(first_frame,
                                        tutel_detector,
@@ -59,23 +60,24 @@ if detected_streamers is None:
 
 logger.info('Detected streamer: %s', detected_streamers[0])
 
-if detected_streamers[0] == 'tutel':
+if detected_streamers[0][0] == 'tutel':
     logger.info(
         'Tutel is streaming, no clue expected. Have a good stream!')
     sys.exit(0)
 
-if detected_streamers[0] == 'dunno':
+if detected_streamers[0][0] == 'dunno':
     logger.warning('Could not determine the streamer, panic mode.')
     logger.warning(
         'Panic mode will produce results for both streamers')
-    detected_streamers = ['neuro', 'evil']
+    detected_streamers = [('neuro', 1.0), ('evil', 1.0)]
 
 
 images_array = []
 thresholds_array = []
 detector_squares = []
+adjustment_value = 1.0
 
-for detected_streamer in detected_streamers:
+for (detected_streamer, adj_value) in detected_streamers:
     threshold_file = (neuro_thresholds if detected_streamer == 'neuro'
                       else evil_thresholds)
     images_folder = (neuro_folder if detected_streamer == 'neuro'
@@ -93,14 +95,16 @@ for detected_streamer in detected_streamers:
     images_array.append(images)
     thresholds_array.append(thresholds)
     detector_squares.append(detector_square)
+    adjustment_value = max(adjustment_value, adj_value)
 
 
 results = scrutinize_with_images_and_thresholds(
-    process, images_array, thresholds_array, detector_squares)
+    process, images_array, thresholds_array, detector_squares,
+    adjustment_value)
 
 for idx, detected_streamer in enumerate(detected_streamers):
     res = json.dumps(results[idx])
-    scrutinize_results.append({'streamer': detected_streamer,
+    scrutinize_results.append({'streamer': detected_streamer[0],
                                'result': res})
 
 

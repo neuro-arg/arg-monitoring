@@ -195,7 +195,7 @@ def calculate_ssim(target: np.ndarray, reference: np.ndarray) -> float:
     Returns:
         float: The difference
     """
-    return ssim(target, reference, multichannel=True, channel_axis=2)
+    return ssim(target, reference, channel_axis=2)
 
 
 def calculate_rgb_diff(target: np.ndarray, reference: np.ndarray) -> float:
@@ -236,7 +236,8 @@ def whose_stream(target: np.ndarray,
                  tutel_detector_square: np.ndarray,
                  neuro_detector_square: np.ndarray,
                  evil_detector_square: np.ndarray,
-                 square_size: int) -> Literal['neuro', 'evil', 'dunno']:
+                 square_size: int) -> tuple[Literal['neuro', 'evil', 'dunno'],
+                                            float]:
     """
     Determines based on the first frame whose stream is being watched
 
@@ -248,14 +249,25 @@ def whose_stream(target: np.ndarray,
         square_size (int): The size of the squares
 
     Returns:
-        Literal['tutel', 'neuro', 'evil', 'dunno']: The result
+        tuple[Literal['tutel', 'neuro', 'evil', 'dunno'], float]: The result
     """
     square = target[:square_size, (WHOSE_STREAM_SQUARE_NUMBER - 1)
                     * square_size:
                     WHOSE_STREAM_SQUARE_NUMBER * square_size]
-    tutel_diff = calculate_rgb_diff(square, tutel_detector_square)
-    neuro_diff = calculate_rgb_diff(square, neuro_detector_square)
-    evil_diff = calculate_rgb_diff(square, evil_detector_square)
+
+    tutel_diffs = [
+        calculate_rgb_diff((square * (i / 100.0)).astype(np.uint8),
+                           tutel_detector_square) for i in range(100, 170)]
+    neuro_diffs = [
+        calculate_rgb_diff((square * (i / 100.0)).astype(np.uint8),
+                           neuro_detector_square) for i in range(100, 170)]
+    evil_diffs = [
+        calculate_rgb_diff((square * (i / 100.0)).astype(np.uint8),
+                           evil_detector_square) for i in range(100, 170)]
+
+    tutel_idx, tutel_diff = max(enumerate(tutel_diffs), key=lambda x: x[1])
+    neuro_idx, neuro_diff = max(enumerate(neuro_diffs), key=lambda x: x[1])
+    evil_idx, evil_diff = max(enumerate(evil_diffs), key=lambda x: x[1])
 
     logging.info('Tutel diff: %s', tutel_diff)
     logging.info('Neuro diff: %s', neuro_diff)
@@ -263,12 +275,12 @@ def whose_stream(target: np.ndarray,
 
     if tutel_diff > neuro_diff and tutel_diff > evil_diff \
        and tutel_diff > DETECTOR_THRESHOLD:
-        return 'tutel'
+        return 'tutel', (tutel_idx + 100) * 0.01
 
     if neuro_diff > evil_diff and neuro_diff > DETECTOR_THRESHOLD:
-        return 'neuro'
+        return 'neuro', (neuro_idx + 100) * 0.01
 
     if evil_diff > neuro_diff and evil_diff > DETECTOR_THRESHOLD:
-        return 'evil'
+        return 'evil', (evil_idx + 100) * 0.01
 
-    return 'dunno'
+    return 'dunno', 1.0
