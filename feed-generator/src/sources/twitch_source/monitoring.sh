@@ -2,7 +2,8 @@
 # Bash script that listens to a stream, redirects the video to vedal987_scrutinize.py, and audio to pleep-search
 # Definitely not scuffed
 
-STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/vedal987 best"
+# STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/vedal987 best"
+STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/videos/2208029993 best"
 TEMP_RESULT_JSON="temp_result.json"
 TEMP_RESULT_WAV="for_pleep.wav"
 REQUIRED_PROGRAMS="streamlink ffmpeg python3 jq"
