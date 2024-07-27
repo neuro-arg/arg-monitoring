@@ -37,7 +37,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip --disable-pip-version-check --no-compile install ./feed-generator
+          python -m pip install --disable-pip-version-check --no-compile ./feed-generator
 
       - name: Run vedal987_scrutinize.py
         env:
