@@ -6,6 +6,8 @@ on:
 jobs:
   handle_trigger:
     runs-on: ubuntu-latest
+    strategy:
+        lang: ["EN", "JP", "CN"]
     steps:
       - uses: actions/checkout@v4
 
@@ -39,9 +41,10 @@ jobs:
         run: |
           python -m pip install --disable-pip-version-check --no-compile ./feed-generator
 
-      - name: Run vedal987_scrutinize.py
+      - name: Run monitor switch
         env:
           TWITCH_OAUTH: ${{ secrets.TWITCH_OAUTH }}
+          MONITOR_SWITCH: ${{ matrix.lang }}
         run: |
           cd feed-generator/src/sources/twitch_source
           ./monitoring.sh || true

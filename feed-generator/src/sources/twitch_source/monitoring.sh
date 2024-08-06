@@ -1,13 +1,36 @@
 #!/bin/bash
 # Bash script that listens to a stream, redirects the video to vedal987_scrutinize.py, and audio to pleep-search
 # Definitely not scuffed
+# Also supports JP and Bilibili through extremely unscuffed means
 
-STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/vedal987 best"
 TEMP_RESULT_JSON="temp_result.json"
 TEMP_RESULT_WAV="for_pleep.wav"
 REQUIRED_PROGRAMS="streamlink ffmpeg python3 jq"
 REQUIRED_FILES="pleep-search out.bin"
 AUDIO_THRESHOLD=0.8
+
+case $MONITOR_SWITCH in
+    JP)
+        echo "JP stream"
+        STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/vedal987_jp best"
+        OUTPUT_NEURO_FILE=neuro_jp.txt
+        OUTPUT_EVIL_FILE=evil_jp.txt
+        ;;
+    CN)
+        echo "CN stream"
+        STREAMLINK_VIDEO_AND_QUALITY="https://live.bilibili.com/1852504554 best"
+        OUTPUT_NEURO_FILE=neuro_cn.txt
+        OUTPUT_EVIL_FILE=evil_cn.txt
+        ;;
+    *)
+        echo "EN stream (default)"
+        STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/vedal987 best"
+        # STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/videos/2216580582 best"
+        OUTPUT_NEURO_FILE=neuro.txt
+        OUTPUT_EVIL_FILE=evil.txt
+        ;;
+esac
+
 
 trap quit_program INT
 
@@ -52,15 +75,15 @@ EVIL_JSON=$(jq '.[] | select(.streamer=="evil")' $TEMP_RESULT_JSON)
 if [ -z "$NEURO_JSON" ]; then
     echo "Skipping Neuro result"
 else
-    echo $(echo -n $NEURO_JSON | jq '.result') > neuro.txt
-    echo -n $AUDIO_JSON >> neuro.txt
+    echo $(echo -n $NEURO_JSON | jq '.result') > $OUTPUT_NEURO_FILE
+    echo -n $AUDIO_JSON >> $OUTPUT_NEURO_FILE
 fi
 
 if [ -z "$EVIL_JSON" ]; then
     echo "Skipping Evil result"
 else
-    echo $(echo -n $EVIL_JSON | jq '.result') > evil.txt
-    echo -n $AUDIO_JSON >> evil.txt
+    echo $(echo -n $EVIL_JSON | jq '.result') > $OUTPUT_EVIL_FILE
+    echo -n $AUDIO_JSON >> $OUTPUT_EVIL_FILE
 fi
 
 quit_program
