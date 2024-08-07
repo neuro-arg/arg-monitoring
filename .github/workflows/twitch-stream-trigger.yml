@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix: 
+          fail-fast: false
           lang: ["EN", "JP", "CN"]
     steps:
       - uses: actions/checkout@v4

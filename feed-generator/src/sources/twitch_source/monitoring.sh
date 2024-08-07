@@ -21,11 +21,12 @@ case $MONITOR_SWITCH in
         STREAMLINK_VIDEO_AND_QUALITY="https://live.bilibili.com/1852504554 best"
         OUTPUT_NEURO_FILE=neuro_cn.txt
         OUTPUT_EVIL_FILE=evil_cn.txt
+        unset TWITCH_OAUTH # i don't want bilibili taking my twitch token thank you
         ;;
     *)
         echo "EN stream (default)"
         STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/vedal987 best"
-        # STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/videos/2216580582 best"
+        # STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/videos/2218300447 best"
         OUTPUT_NEURO_FILE=neuro.txt
         OUTPUT_EVIL_FILE=evil.txt
         ;;

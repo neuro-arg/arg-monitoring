@@ -50,6 +50,11 @@ There is also a Twitch Stream trigger, which relies on:
 Run the file `hook_listener.py` to create the first skeleton for a
 config file, which will be `secrets.ini`.
 
+### Audio Monitoring
+
+Audio monitoring is achieved with @owobred's
+[pleep](https://github.com/owobred/pleep) program.
+
 ## Contributing
 
 The repository is split into two parts: `feed-generator` and `web`.
