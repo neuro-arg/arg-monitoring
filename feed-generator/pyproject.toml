@@ -12,7 +12,7 @@ requests = "^2.31.0"
 dataclasses-json = "^0.6.7"
 beautifulsoup4 = "^4.12.3"
 feedgen = "^1.0.0"
-youtube-dl = { git = "https://github.com/ytdl-org/youtube-dl.git", rev = "71223bf" }
+youtube-dl = { git = "https://github.com/ytdl-org/youtube-dl.git", rev = "c509896" }
 pillow = "^10.4.0"
 numpy = "^2.0.1"
 opencv-python = "^4.9.0.80"
