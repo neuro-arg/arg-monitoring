@@ -2371,10 +2371,10 @@ develop = false
 [package.source]
 type = "git"
 url = "https://github.com/ytdl-org/youtube-dl.git"
-reference = "71223bf"
-resolved_reference = "71223bff39551a11b6959a3de2dd9e2f070f3c4f"
+reference = "c509896"
+resolved_reference = "c5098961b04ce83f4615f2a846c84f803b072639"
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "aa976b9489bfc08c215b1f96f6daa3e2d5a017815d10fd4eac3dd087cf2553c8"
+content-hash = "a0effe0c6f6f82d526a12d6265cdffaf6a3c1717c506a4f7b5ce97e7a5608914"
