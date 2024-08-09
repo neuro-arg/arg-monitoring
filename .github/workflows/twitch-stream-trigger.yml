@@ -7,8 +7,8 @@ jobs:
   handle_trigger:
     runs-on: ubuntu-latest
     strategy:
-        matrix: 
-          fail-fast: false
+        fail-fast: false
+        matrix:
           lang: ["EN", "JP", "CN"]
     steps:
       - uses: actions/checkout@v4
