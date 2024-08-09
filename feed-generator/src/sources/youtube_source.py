@@ -8,6 +8,7 @@ import logging
 from io import BytesIO
 from typing import Optional
 
+from utils import check_proxy_variables
 from contextlib import redirect_stdout
 from youtube_dl import YoutubeDL # type: ignore
 
@@ -19,6 +20,9 @@ class YoutubeSource:
     def __init__(self, url: str) -> None:
         self.url = url
         self.hash: Optional[str] = None
+        self.options = {
+            'proxy': check_proxy_variables()
+        }
 
     @staticmethod
     def __calculate_hash(stream: BytesIO) -> str:
@@ -28,12 +32,13 @@ class YoutubeSource:
         return sha.hexdigest()
 
     @staticmethod
-    def __get_lowest_video_data(video_id: str) -> BytesIO:
+    def __get_lowest_video_data(video_id: str, options: dict) -> BytesIO:
         buffer = BytesIO()
         ctx = {
             'outtmpl': "-",
             'logtostderr': True,
-            'format': 'worst'
+            'format': 'worst',
+            **options
         }
         with redirect_stdout(buffer), YoutubeDL(ctx) as ytdl:  # type: ignore
             ytdl.download([video_id])
@@ -51,7 +56,7 @@ class YoutubeSource:
         try:
             logging.info("Retrieving lowest quality resolution for %s",
                          self.url)
-            stream = self.__get_lowest_video_data(self.url)
+            stream = self.__get_lowest_video_data(self.url, self.options)
             self.hash = self.__calculate_hash(stream)
             return self.hash
         except:  # pylint: disable=bare-except # noqa: E722

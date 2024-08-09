@@ -12,7 +12,7 @@ from uuid import uuid4
 
 import youtube_dl  # type: ignore
 from dataclasses_json import dataclass_json
-from utils import download_encode_and_hash
+from utils import download_encode_and_hash, check_proxy_variables
 
 
 @dataclass_json
@@ -36,6 +36,9 @@ class VideoInformationGetter:
     def __init__(self, url: str) -> None:
         self.url = url
         self.solution: Optional[VideoInformation] = None
+        self.options = {
+            'proxy': check_proxy_variables()
+        }
 
     @staticmethod
     def __read_file_then_delete(filename: str) -> str:
@@ -75,7 +78,6 @@ class VideoInformationGetter:
             return self.__read_file_then_delete(filename)
         return ''
 
-
     def get(self) -> Optional[VideoInformation]:
         """
         Returns a VideoInformation object if the video exists,
@@ -88,7 +90,7 @@ class VideoInformationGetter:
 
         try:
             logging.info("Getting video information for %s", self.url)
-            with youtube_dl.YoutubeDL({}) as ydl:
+            with youtube_dl.YoutubeDL(self.options) as ydl:
                 info = ydl.sanitize_info(
                     ydl.extract_info(self.url, download=False))
 

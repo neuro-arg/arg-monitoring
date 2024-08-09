@@ -33,7 +33,15 @@ jobs:
             cache.json
           key: arg-cache
 
+      - name: ZeroTier
+        uses: zerotier/github-action@v1
+        with:
+          network_id: ${{ secrets.ZEROTIER_NETWORK_ID }}
+          auth_token: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
+
       - name: Run main.py
+        env:
+          PROXY_INCANTATION: ${{ secrets.PROXY_INCANTATION }}
         run: |
           python feed-generator/src/main.py
 

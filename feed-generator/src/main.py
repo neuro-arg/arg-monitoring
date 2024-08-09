@@ -28,6 +28,7 @@ logging.basicConfig(
 
 RETRY_NO = 5
 RETRY_INTERVAL = 30
+DELAY_INTERVAL = 5
 
 NUMBERS_1_URL = "https://www.youtube.com/watch?v=wc-QCoMm4J8"
 NUMBERS_2_URL = "https://www.youtube.com/watch?v=giJI-TDbO5k"
@@ -51,6 +52,7 @@ def get_video_info_and_content(url) -> tuple[VideoInformation, str]:
     """
     info = while_none_retry_max(VideoInformationGetter(url).get)
     source = while_none_retry_max(YoutubeSource(url).get)
+    time.sleep(DELAY_INTERVAL)
 
     return info, source
 
