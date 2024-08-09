@@ -43,6 +43,7 @@ jobs:
         env:
           PROXY_INCANTATION: ${{ secrets.PROXY_INCANTATION }}
         run: |
+          youtube-dl --proxy $PROXY_INCANTATION https://www.youtube.com/watch?v=wc-QCoMm4J8
           python feed-generator/src/main.py
 
       - name: Delete old cache

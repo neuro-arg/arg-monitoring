@@ -29,5 +29,5 @@ def check_proxy_variables() -> Optional[str]:
     """
     result = os.getenv('PROXY_INCANTATION')
     if result:
-        print('Will be using proxy')
+        logging.info('Will be using proxy')
     return result
