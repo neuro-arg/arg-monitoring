@@ -67,7 +67,8 @@ class VideoInformationGetter:
             'subtitleslangs': ['en'],
             'writeautomaticsub': True,
             'outtmpl': f'/tmp/{file_uuid}',
-            'quiet': True
+            'quiet': True,
+            **self.options
         }
 
         with youtube_dl.YoutubeDL(opts) as ydl:
