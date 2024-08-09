@@ -38,6 +38,7 @@ class YoutubeSource:
             'outtmpl': "-",
             'logtostderr': True,
             'format': 'worst',
+            'ratelimit': '70K',
             **options
         }
         with redirect_stdout(buffer), YoutubeDL(ctx) as ytdl:  # type: ignore
