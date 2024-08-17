@@ -80,7 +80,7 @@ jobs:
           git log
 
       - name: Push new commit
-        if: matrix.lang === 'EN' && ${{ !github.event.act }}
+        if: matrix.lang == 'EN' && ${{ !github.event.act }}
         run: |
           git push origin publish
 
