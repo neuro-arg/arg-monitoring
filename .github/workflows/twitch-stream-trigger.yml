@@ -54,6 +54,7 @@ jobs:
           cp feed-generator/src/sources/twitch_source/*.txt .
 
       - name: Stash results
+        if: matrix.lang == 'EN'
         run: |
           git config --local user.email "worker@github.com"
           git config --local user.name "Twitch Worker"
@@ -62,11 +63,13 @@ jobs:
           git stash -m "generated changes"
 
       - name: Checkout to publish
+        if: matrix.lang == 'EN'
         uses: actions/checkout@v4
         with:
           ref: 'publish'
 
       - name: Add a commit (only if there are changes)
+        if: matrix.lang == 'EN'
         run: |
           git rm neuro.txt || true
           git rm evil.txt || true
@@ -77,7 +80,7 @@ jobs:
           git log
 
       - name: Push new commit
-        if: ${{ !github.event.act }}
+        if: matrix.lang === 'EN' && ${{ !github.event.act }}
         run: |
           git push origin publish
 
