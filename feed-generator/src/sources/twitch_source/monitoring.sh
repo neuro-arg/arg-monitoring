@@ -7,6 +7,7 @@ TEMP_RESULT_JSON="temp_result.json"
 TEMP_RESULT_WAV="for_pleep.wav"
 REQUIRED_PROGRAMS="streamlink ffmpeg python3 jq"
 REQUIRED_FILES="pleep-search out.bin"
+STREAM_TYPE="twitch"
 AUDIO_THRESHOLD=0.8
 
 case $MONITOR_SWITCH in
@@ -15,6 +16,7 @@ case $MONITOR_SWITCH in
         STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/vedal987_jp best"
         OUTPUT_NEURO_FILE=neuro_jp.txt
         OUTPUT_EVIL_FILE=evil_jp.txt
+        unset BILIBILI_TOKEN
         ;;
     CN)
         echo "CN stream"
@@ -22,6 +24,7 @@ case $MONITOR_SWITCH in
         OUTPUT_NEURO_FILE=neuro_cn.txt
         OUTPUT_EVIL_FILE=evil_cn.txt
         unset TWITCH_OAUTH # i don't want bilibili taking my twitch token thank you
+        STREAM_TYPE="bilibili"
         ;;
     *)
         echo "EN stream (default)"
@@ -29,6 +32,7 @@ case $MONITOR_SWITCH in
         # STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/videos/2218300447 best"
         OUTPUT_NEURO_FILE=neuro.txt
         OUTPUT_EVIL_FILE=evil.txt
+        unset BILIBILI_TOKEN
         ;;
 esac
 
@@ -60,12 +64,24 @@ done
 
 # NOTE: I couldn't think of another way to do this without it not
 # recognizing "Authorization=OAuth $TWITCH_OAUTH" as one argument
-if [ -n "$TWITCH_OAUTH" ]; then
-    echo "Have Twitch token, will skip ads"
-    streamlink --stdout --hls-live-restart --twitch-low-latency --twitch-api-header "Authorization=OAuth $TWITCH_OAUTH" $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
-else
-    echo "No Twitch token, cannot skip ads"
-    streamlink --stdout --hls-live-restart --twitch-low-latency $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
+if [ "$STREAM_TYPE" == "twitch" ]; then
+    if [ -n "$TWITCH_OAUTH" ]; then
+        echo "Have Twitch token, will skip ads"
+        streamlink --stdout --hls-live-restart --twitch-low-latency --twitch-api-header "Authorization=OAuth $TWITCH_OAUTH" $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
+    else
+        echo "No Twitch token, cannot skip ads"
+        streamlink --stdout --hls-live-restart --twitch-low-latency $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
+    fi
+fi
+
+if [ "$STREAM_TYPE" == "bilibili" ]; then
+    if [ -n "$BILIBILI_TOKEN" ]; then
+        echo "Have B2 session data. Can get higher quality streams"
+        streamlink --stdout --http-cookie SESSDATA=$BILIBILI_TOKEN --hls-live-restart $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
+    else
+        echo "No B2 session data, stream will be low quality"
+        streamlink --stdout --hls-live-restart $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
+    fi
 fi
 
 AUDIO_JSON=$(RUST_LOG=info ./pleep-search --json out.bin $TEMP_RESULT_WAV | python3 audio_threshold_parser.py)
