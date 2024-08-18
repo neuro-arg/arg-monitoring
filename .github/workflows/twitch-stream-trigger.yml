@@ -46,6 +46,7 @@ jobs:
       - name: Run monitor switch
         env:
           TWITCH_OAUTH: ${{ secrets.TWITCH_OAUTH }}
+          BILIBILI_TOKEN: ${{ secrets.BILIBILI_TOKEN }}
           MONITOR_SWITCH: ${{ matrix.lang }}
         run: |
           cd feed-generator/src/sources/twitch_source
