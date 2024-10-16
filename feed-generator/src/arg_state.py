@@ -37,6 +37,8 @@ class ArgState(DataClassJsonMixin):
     meaning_of_life_video_hash: str
     candles_video_info: VideoInformation
     candles_video_hash: str
+    numbers_3_video_info: VideoInformation
+    numbers_3_video_hash: str
     soundcloud_user_info: SoundCloudUserInformation
 
     youtube_feed_hash: str

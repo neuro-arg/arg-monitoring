@@ -38,6 +38,7 @@ FILTERED_URL = "https://www.youtube.com/watch?v=4j5oDzRiXUA"
 HELLO_WORLD_URL = "https://www.youtube.com/watch?v=OiKrYrbs3Qs"
 MEANING_OF_LIFE_URL = "https://www.youtube.com/watch?v=IRzyqcKljxw"
 CANDLES_URL = "https://www.youtube.com/watch?v=x4l5ckrtbAc"
+NUMBERS_3_URL = "https://www.youtube.com/watch?v=aX4v5XUQtnw"
 SOUNDCLOUD_URL = "https://soundcloud.com/572943"
 
 YOUTUBE_FEED_URL = \
@@ -97,6 +98,7 @@ current_state = ArgState(
     *get_video_info_and_content(HELLO_WORLD_URL),
     *get_video_info_and_content(MEANING_OF_LIFE_URL),
     *get_video_info_and_content(CANDLES_URL),
+    *get_video_info_and_content(NUMBERS_3_URL),
     while_none_retry_max(SoundCloudUserGetter(SOUNDCLOUD_URL).get),
     while_none_retry_max(youtube_feed_getter.get),
     while_none_retry_max(soundcloud_feed_getter.get),

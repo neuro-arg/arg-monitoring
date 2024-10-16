@@ -64,6 +64,8 @@ structure_reflection! {
         meaning_of_life_video_hash: Option<String>,
         candles_video_info: Option<VideoInformation>,
         candles_video_hash: Option<String>,
+        numbers_3_video_info: Option<VideoInformation>,
+        numbers_3_video_hash: Option<String>,
         soundcloud_user_info: Option<SoundCloudUserInformation>,
 
         youtube_feed_hash: Option<String>,
