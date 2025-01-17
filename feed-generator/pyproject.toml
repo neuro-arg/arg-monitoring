@@ -15,7 +15,7 @@ feedgen = "^1.0.0"
 youtube-dl = { git = "https://github.com/ytdl-org/youtube-dl.git", rev = "d55d1f4" }
 pillow = "^11.0.0"
 numpy = "^2.1.2"
-opencv-python = "^4.9.0.80"
+opencv-python = "^4.11.0.86"
 scikit-image = "^0.24.0"
 matplotlib = "^3.9.2"
 twitchapi = "^4.3.1"
