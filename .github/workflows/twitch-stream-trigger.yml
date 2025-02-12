@@ -38,6 +38,7 @@ jobs:
         with:
           packages: ffmpeg libsm6 libxext6 jq libblas3
           version: 1.0
+          execute_install_scripts: true
 
       - name: Install dependencies
         run: |
@@ -50,7 +51,7 @@ jobs:
           MONITOR_SWITCH: ${{ matrix.lang }}
         run: |
           cd feed-generator/src/sources/twitch_source
-          LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu/blas/:$LD_LIBRARY_PATH" ./monitoring.sh || true
+          ./monitoring.sh || true
           cd -
           cp feed-generator/src/sources/twitch_source/*.txt .
 
