@@ -8,6 +8,7 @@ import json
 import logging
 import subprocess
 import sys
+import psutil
 import os
 
 import numpy as np
@@ -110,3 +111,7 @@ for idx, detected_streamer in enumerate(detected_streamers):
 
 logger.info('Sending this json to stdout: %s', json.dumps(scrutinize_results))
 print(json.dumps(scrutinize_results))
+
+for proc in psutil.process_iter():
+    if proc.name() == 'ffmpeg':
+        proc.kill()
