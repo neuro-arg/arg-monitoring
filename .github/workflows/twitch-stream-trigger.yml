@@ -56,7 +56,7 @@ jobs:
           MONITOR_SWITCH: ${{ matrix.lang }}
         run: |
           cd feed-generator/src/sources/twitch_source
-          PATH="$PWD/ffmpeg-master-latest-linux64-gpl/bin:$PATH" ./monitoring.sh || true
+          PATH="$PWD/../../../../ffmpeg-master-latest-linux64-gpl/bin:$PATH" ./monitoring.sh || true
           cd -
           cp feed-generator/src/sources/twitch_source/*.txt .
 
