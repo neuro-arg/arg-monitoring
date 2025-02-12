@@ -111,3 +111,4 @@ for idx, detected_streamer in enumerate(detected_streamers):
 logger.info('Sending this json to stdout: %s', json.dumps(scrutinize_results))
 print(json.dumps(scrutinize_results))
 logger.info('Python script is qutting')
+sys.exit(1)

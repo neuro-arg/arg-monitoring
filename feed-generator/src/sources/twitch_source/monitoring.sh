@@ -3,6 +3,8 @@
 # Definitely not scuffed
 # Also supports JP and Bilibili through extremely unscuffed means
 
+set -o pipefail
+
 TEMP_RESULT_JSON="temp_result.json"
 TEMP_RESULT_WAV="for_pleep.wav"
 REQUIRED_PROGRAMS="streamlink ffmpeg python3 jq"
