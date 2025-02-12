@@ -49,6 +49,7 @@ jobs:
           BILIBILI_TOKEN: ${{ secrets.BILIBILI_TOKEN }}
           MONITOR_SWITCH: ${{ matrix.lang }}
         run: |
+          ln -s /usr/lib/x86_64-linux-gnu/blas/libblas.so.3 /usr/lib/x86_64-linux-gnu/
           cd feed-generator/src/sources/twitch_source
           ./monitoring.sh || true
           cd -
