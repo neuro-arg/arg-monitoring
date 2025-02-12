@@ -65,13 +65,7 @@ done
 # NOTE: I couldn't think of another way to do this without it not
 # recognizing "Authorization=OAuth $TWITCH_OAUTH" as one argument
 if [ "$STREAM_TYPE" == "twitch" ]; then
-    if [ -n "$TWITCH_OAUTH" ]; then
-        echo "Have Twitch token, will skip ads"
-        streamlink --stdout --hls-live-restart --twitch-low-latency --twitch-api-header "Authorization=OAuth $TWITCH_OAUTH" $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
-    else
-        echo "No Twitch token, cannot skip ads"
-        streamlink --stdout --hls-start-offset 00:07:10 --hls-live-restart --twitch-low-latency $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
-    fi
+    streamlink --stdout --hls-start-offset 00:07:10 --hls-live-restart --twitch-low-latency $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
 fi
 
 if [ "$STREAM_TYPE" == "bilibili" ]; then
