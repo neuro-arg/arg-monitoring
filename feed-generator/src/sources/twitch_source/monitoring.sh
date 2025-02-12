@@ -28,8 +28,8 @@ case $MONITOR_SWITCH in
         ;;
     *)
         echo "EN stream (default)"
-        STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/vedal987 best"
-        # STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/videos/2218300447 best"
+        # STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/vedal987 best"
+        STREAMLINK_VIDEO_AND_QUALITY="https://www.twitch.tv/videos/2378542302 best"
         OUTPUT_NEURO_FILE=neuro.txt
         OUTPUT_EVIL_FILE=evil.txt
         unset BILIBILI_TOKEN
@@ -70,7 +70,7 @@ if [ "$STREAM_TYPE" == "twitch" ]; then
         streamlink --stdout --hls-live-restart --twitch-low-latency --twitch-api-header "Authorization=OAuth $TWITCH_OAUTH" $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
     else
         echo "No Twitch token, cannot skip ads"
-        streamlink --stdout --hls-live-restart --twitch-low-latency $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
+        streamlink --stdout --hls-start-offset 00:07:10 --hls-live-restart --twitch-low-latency $STREAMLINK_VIDEO_AND_QUALITY | ffmpeg -i - -map 0:a -ar 44100 -ac 1 -f wav $TEMP_RESULT_WAV -map 0:v -c:v copy -f matroska - | python3 vedal987_scrutinize.py > $TEMP_RESULT_JSON
     fi
 fi
 
@@ -84,10 +84,14 @@ if [ "$STREAM_TYPE" == "bilibili" ]; then
     fi
 fi
 
+echo "pre audio json"
+
 AUDIO_JSON=$(RUST_LOG=info ./pleep-search --json out.bin $TEMP_RESULT_WAV | python3 audio_threshold_parser.py)
 
 NEURO_JSON=$(jq '.[] | select(.streamer=="neuro")' $TEMP_RESULT_JSON)
 EVIL_JSON=$(jq '.[] | select(.streamer=="evil")' $TEMP_RESULT_JSON)
+
+echo "post neuro/evil json"
 
 if [ -z "$NEURO_JSON" ]; then
     echo "Skipping Neuro result"
