@@ -21,6 +21,7 @@ matplotlib = "^3.9.2"
 twitchapi = "^4.3.1"
 pygithub = "^2.5.0"
 streamlink = "^7.1.2"
+psutil = "^6.1.1"
 
 [tool.poetry.dev-dependencies]
 types-pillow = "*"
