@@ -56,7 +56,7 @@ class SoundCloudUserGetter:
 
             target_json = matches[0][32:-10]
             obj = json.loads(target_json)
-            interesting_data = obj[6]
+            interesting_data = obj[5]
             self.solution = SoundCloudUserInformation(
                 interesting_data["data"]["full_name"],
                 download_encode_and_hash(
