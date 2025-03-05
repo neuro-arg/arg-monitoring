@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import Optional
 from uuid import uuid4
 
-import youtube_dl  # type: ignore
+import yt_dlp
 from dataclasses_json import dataclass_json
 from utils import download_encode_and_hash, check_proxy_variables
 
@@ -71,7 +71,7 @@ class VideoInformationGetter:
             **self.options
         }
 
-        with youtube_dl.YoutubeDL(opts) as ydl:
+        with yt_dlp.YoutubeDL(opts) as ydl:
             ydl.download([self.url])
 
         filename = f'/tmp/{file_uuid}.en.vtt'
@@ -91,7 +91,7 @@ class VideoInformationGetter:
 
         try:
             logging.info("Getting video information for %s", self.url)
-            with youtube_dl.YoutubeDL(self.options) as ydl:
+            with yt_dlp.YoutubeDL(self.options) as ydl:
                 info = ydl.sanitize_info(
                     ydl.extract_info(self.url, download=False))
 

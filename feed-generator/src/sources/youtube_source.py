@@ -10,7 +10,7 @@ from typing import Optional
 
 from utils import check_proxy_variables
 from contextlib import redirect_stdout
-from youtube_dl import YoutubeDL # type: ignore
+from yt_dlp import YoutubeDL
 
 
 class YoutubeSource:
