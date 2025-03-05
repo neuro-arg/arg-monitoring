@@ -25,8 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd web/www
-        . "$HOME/.cargo/env"
-        cargo install wasm-pack
+        npm -g install wasm-pack
         npm install
 
     - name: Build
