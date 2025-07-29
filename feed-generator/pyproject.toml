@@ -1,3 +1,14 @@
+[project]
+name = "arg-monitoring"
+version = "0.69.420"
+description = "Monitors the ARG and stuff"
+authors = [
+  { name = "clueless author", email = "<clueless@clueless.org>"}
+]
+readme = "../README.md"
+packages = [{include = "src"}]
+requires-python = ">=3.10,<3.13"
+
 [tool.poetry]
 name = "arg-monitoring"
 version = "0.69.420"
@@ -8,20 +19,20 @@ packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
-requests = "^2.31.0"
+requests = "^2.32.4"
 dataclasses-json = "^0.6.7"
-beautifulsoup4 = "^4.12.3"
+beautifulsoup4 = "^4.13.4"
 feedgen = "^1.0.0"
-yt-dlp = "^2025.2.19"
-pillow = "^11.1.0"
+yt-dlp = "^2025.7.21"
+pillow = "^11.3.0"
 numpy = "^2.2.2"
-opencv-python = "^4.11.0.86"
-scikit-image = "^0.25.0"
-matplotlib = "^3.9.2"
-twitchapi = "^4.3.1"
-pygithub = "^2.5.0"
-streamlink = "^7.1.2"
-psutil = "^6.1.1"
+opencv-python = "^4.12.0.88"
+scikit-image = "^0.25.2"
+matplotlib = "^3.10.3"
+twitchapi = "^4.5.0"
+pygithub = "^2.6.1"
+streamlink = "^7.5.0"
+psutil = "^7.0.0"
 
 [tool.poetry.dev-dependencies]
 types-pillow = "*"
