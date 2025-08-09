@@ -54,8 +54,8 @@ const updateTable = async () => {
       const templateStr = `<tr>
                          <td>${key}</td>
                          <td>${statusMapping.get(key) ? "Matches" : "Does not match"}</td>
-                         <td><img src="${JSON.stringify(lhsState[key], null, true)}"></img></td>
-                         <td><img src="${JSON.stringify(rhsState[key], null, true)}"></img></td>
+                         <td><img src="${lhsState[key]}"></img></td>
+                         <td><img src="${rhsState[key]}"></img></td>
                          </tr>`;
       newInnerHTML += templateStr;
       continue;

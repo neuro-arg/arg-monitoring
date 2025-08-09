@@ -23,7 +23,7 @@ class ArgState(DataClassJsonMixin):
     """
     numbers_1_video_info: VideoInformation
     numbers_1_video_hash: str
-    numbers_1_thumbnail: str
+    numbers_1_video_thumbnail: str
     study_video_info: VideoInformation
     study_video_hash: str
     study_video_thumbnail: str
@@ -35,7 +35,7 @@ class ArgState(DataClassJsonMixin):
     psv_video_thumbnail: str
     filtered_video_info: VideoInformation
     filtered_video_hash: str
-    fitlered_video_thumbnail: str
+    filtered_video_thumbnail: str
     hello_world_video_info: VideoInformation
     hello_world_video_hash: str
     hello_world_video_thumbnail: str
