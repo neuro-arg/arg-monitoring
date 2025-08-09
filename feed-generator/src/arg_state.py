@@ -23,22 +23,31 @@ class ArgState(DataClassJsonMixin):
     """
     numbers_1_video_info: VideoInformation
     numbers_1_video_hash: str
+    numbers_1_thumbnail: str
     study_video_info: VideoInformation
     study_video_hash: str
+    study_video_thumbnail: str
     numbers_2_video_info: VideoInformation
     numbers_2_video_hash: str
+    numbers_2_video_thumbnail: str
     psv_video_info: VideoInformation
     psv_video_hash: str
+    psv_video_thumbnail: str
     filtered_video_info: VideoInformation
     filtered_video_hash: str
+    fitlered_video_thumbnail: str
     hello_world_video_info: VideoInformation
     hello_world_video_hash: str
+    hello_world_video_thumbnail: str
     meaning_of_life_video_info: VideoInformation
     meaning_of_life_video_hash: str
+    meaning_of_life_video_thumbnail: str
     candles_video_info: VideoInformation
     candles_video_hash: str
+    candles_videos_thumbnail: str
     numbers_3_video_info: VideoInformation
     numbers_3_video_hash: str
+    numbers_3_video_thumbnail: str
     soundcloud_user_info: SoundCloudUserInformation
 
     youtube_feed_hash: str

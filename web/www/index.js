@@ -50,6 +50,17 @@ const updateTable = async () => {
   // undefined
   let newInnerHTML = tableHeaders;
   for (const key of Object.keys(lhsState)) {
+    if (key.includes('thumbnail')) {
+      const templateStr = `<tr>
+                         <td>${key}</td>
+                         <td>${statusMapping.get(key) ? "Matches" : "Does not match"}</td>
+                         <td><img src="${JSON.stringify(lhsState[key], null, true)}"></img></td>
+                         <td><img src="${JSON.stringify(rhsState[key], null, true)}"></img></td>
+                         </tr>`;
+      newInnerHTML += templateStr;
+      continue;
+    }
+
     const templateStr = `<tr>
                          <td>${key}</td>
                          <td>${statusMapping.get(key) ? "Matches" : "Does not match"}</td>

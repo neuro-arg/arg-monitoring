@@ -10,16 +10,24 @@ from typing import Optional
 import requests
 
 
+def download(url: str) -> bytes:
+    """
+    Downloads the URL and get bytes
+    """
+    logging.info('Downloading %s', url)
+    response = requests.get(url, timeout=60)
+    if response.status_code != 200:
+        raise RuntimeError(f"Could not download {url}")
+    return response.content
+
+
 def download_encode_and_hash(url: str) -> str:
     """
     Downloads whatever URL is being pointed to, and hashes it
     """
-    logging.info('Hashing %s', url)
-    response = requests.get(url, timeout=60)
-    if response.status_code != 200:
-        raise RuntimeError(f"Could not download {url}")
+    data = download(url)
     sha = hashlib.sha256()
-    sha.update(response.content)
+    sha.update(data)
     return sha.hexdigest()
 
 

@@ -48,7 +48,7 @@ SOUNDCLOUD_FEED_URL = "https://feeds.soundcloud.com/users/soundcloud:users:12580
 YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@_neurosama"
 
 
-def get_video_info_and_content(url) -> tuple[VideoInformation, str]:
+def get_video_info_and_content(url) -> tuple[VideoInformation, str, str]:
     """
     Gets video information and content
     """
@@ -56,7 +56,7 @@ def get_video_info_and_content(url) -> tuple[VideoInformation, str]:
     source = while_none_retry_max(YoutubeSource(url).get)
     time.sleep(DELAY_INTERVAL)
 
-    return info, source
+    return info.info, source, info.thumbnail_raw
 
 
 def while_none_retry_max(fn: Callable[[], Any | None]) -> Any:
