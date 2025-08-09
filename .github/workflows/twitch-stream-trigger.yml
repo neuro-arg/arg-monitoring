@@ -17,7 +17,7 @@ jobs:
         working-directory: ./feed-generator/src/sources/twitch_source
         run: |
           wget https://github.com/owobred/pleep/releases/download/latest/pleep-search
-          wget https://github.com/neuro-arg/arg-monitoring/releases/download/audio-monitoring-live/out.bin
+          wget https://github.com/owobred/pleep/releases/download/latest/out.bin
           chmod +x pleep-search
 
       - name: Set up Python
