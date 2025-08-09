@@ -61,7 +61,7 @@ class VideoInformationGetter:
 
     @staticmethod
     def __to_base64_url(data: bytes) -> str:
-        data_as_base64 = base64.urlsafe_b64encode(data)
+        data_as_base64 = base64.b64encode(data).decode()
         return f"data:image/jpeg;base64,{data_as_base64}"
 
     def __get_subtitles(self) -> str:
