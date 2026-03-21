@@ -33,11 +33,16 @@ class YoutubeSource:
     @staticmethod
     def __get_lowest_video_data(video_id: str, options: dict) -> BytesIO:
         buffer = BytesIO()
+
+        # ytdl at some point closes our buffer, so we gotta hack around that
+        old_close = buffer.close
+        buffer.close = lambda: None
         ctx = {"outtmpl": "-", "logtostderr": True, "format": "worst", **options}
         with redirect_stdout(buffer), YoutubeDL(ctx) as ytdl:  # type: ignore
             ytdl.download([video_id])
 
         buffer.seek(0)
+        buffer.close = old_close
         return buffer
 
     def get(self) -> Optional[str]:

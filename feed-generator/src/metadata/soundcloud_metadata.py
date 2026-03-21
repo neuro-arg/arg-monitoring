@@ -8,6 +8,7 @@ import json
 import logging
 from dataclasses import dataclass
 from typing import Optional
+import urllib.parse
 
 import requests
 from bs4 import BeautifulSoup
@@ -35,6 +36,9 @@ class SoundCloudUserGetter:
     Gets SoundCloud user information
     """
 
+    RESOLVE_URL = "https://api-v2.soundcloud.com/resolve?url=%s&client_id=IvZsSdfTxP6ovYz9Nn4XGqmQVKs1vzbB"
+    USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+
     def __init__(self, url: str) -> None:
         self.url = url
         self.solution: Optional[SoundCloudUserInformation] = None
@@ -48,25 +52,25 @@ class SoundCloudUserGetter:
 
         try:
             logging.info("Getting user information for %s", self.url)
-            response = requests.get(self.url, timeout=60)
-            soup = BeautifulSoup(response.content, "html.parser")
+            base64_url = urllib.parse.quote(self.url)
+            complete_url = self.RESOLVE_URL % base64_url
+            logging.info("Querying %s", complete_url)
+            response = requests.get(
+                complete_url, headers={"User-Agent": self.USER_AGENT}, timeout=60
+            )
+            logging.info("Headers sent: %s", response.headers)
+            logging.info("Received status code %d", response.status_code)
 
-            matches = [str(s) for s in soup.find_all("script") if "/572943" in str(s)]
-            if len(matches) == 0:
-                raise RuntimeError("no matches found")
-
-            target_json = matches[0][32:-10]
-            obj = json.loads(target_json)
-            interesting_data = obj[6]
+            interesting_data = json.loads(response.content)
             self.solution = SoundCloudUserInformation(
-                interesting_data["data"]["full_name"],
+                interesting_data["full_name"],
                 download_encode_and_hash(
-                    interesting_data["data"]["visuals"]["visuals"][0]["visual_url"]
+                    interesting_data["visuals"]["visuals"][0]["visual_url"]
                 ),
-                int(interesting_data["data"]["track_count"]),
-                int(interesting_data["data"]["followings_count"]),
-                len(interesting_data["data"]["visuals"]["visuals"]),
-                download_encode_and_hash(interesting_data["data"]["avatar_url"]),
+                int(interesting_data["track_count"]),
+                int(interesting_data["followings_count"]),
+                len(interesting_data["visuals"]["visuals"]),
+                download_encode_and_hash(interesting_data["avatar_url"]),
             )
             return self.solution
         except:  # pylint: disable=bare-except # noqa: E722
