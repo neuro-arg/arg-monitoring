@@ -42,6 +42,7 @@ jobs:
           cd feed-generator/
           uv run src/main.py
           cp atom.pickle ../atom.pickle
+          cp atom.xml ../atom.xml
           cp cache.json ../cache.json
 
       - name: Delete old cache
