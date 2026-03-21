@@ -39,7 +39,10 @@ jobs:
         env:
           PROXY_INCANTATION: ${{ secrets.PROXY_INCANTATION }}
         run: |
-          python feed-generator/src/main.py
+          cd feed-generator/
+          uv run src/main.py
+          cp atom.pickle ../atom.pickle
+          cp cache.json ../cache.json
 
       - name: Delete old cache
         env:
