@@ -1,0 +1,41 @@
+[project]
+name = "arg-monitoring"
+version = "0.69.420"
+description = "Monitors the ARG and stuff"
+authors = [
+  { name = "clueless author", email = "clueless@clueless.org" }
+]
+readme = "../README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "requests>=2.32.4",
+    "dataclasses-json>=0.6.7",
+    "beautifulsoup4>=4.13.4",
+    "feedgen>=1.0.0",
+    "yt-dlp>=2026.3.17",
+    "pillow>=11.3.0",
+    "numpy>=2.2.2",
+    "opencv-python>=4.12.0.88",
+    "scikit-image>=0.25.2",
+    "matplotlib>=3.10.3",
+    "twitchapi>=4.5.0",
+    "pygithub>=2.6.1",
+    "streamlink>=7.5.0",
+    "psutil>=7.0.0",
+    "deno>=2.7.7",
+]
+
+[dependency-groups]
+dev = [
+    "types-pillow",
+    "types-requests",
+    "mypy",
+    "pyright",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/**"]

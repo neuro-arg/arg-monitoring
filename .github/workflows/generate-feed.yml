@@ -1,0 +1,89 @@
+name: Generate feed
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Install dependencies
+        run: |
+          cd feed-generator
+          uv sync
+
+      - name: Restore pickle and json files
+        uses: actions/cache/restore@v3
+        id: restore-pickle-and-json
+        with:
+          path: |
+            atom.pickle
+            cache.json
+          key: arg-cache
+
+      - name: ZeroTier
+        uses: zerotier/github-action@v1
+        with:
+          network_id: ${{ secrets.ZEROTIER_NETWORK_ID }}
+          auth_token: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
+
+      - name: Run main.py
+        env:
+          PROXY_INCANTATION: ${{ secrets.PROXY_INCANTATION }}
+        run: |
+          python feed-generator/src/main.py
+
+      - name: Delete old cache
+        env:
+          CACHE_NAME: ${{ steps.restore-pickle-and-json.outputs.cache-primary-key }}
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${ACT}" == "1" ]; then
+            echo "On Act, skipping."
+            exit 0
+          fi
+          echo "Deleting old cache"
+          gh extension install actions/gh-actions-cache
+          gh actions-cache delete ${CACHE_NAME} -R $REPO --confirm || exit 0
+
+      - name: Cache pickle and json files
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            atom.pickle
+            cache.json
+          key: ${{ steps.restore-pickle-and-json.outputs.cache-primary-key }}
+
+      - name: Stash cache and atom
+        run: |
+          git config --local user.email "worker@github.com"
+          git config --local user.name "Feed Worker"
+          git add -f cache.json atom.xml *feed.xml
+          git stash -m "generated changes"
+
+      - name: Checkout to publish
+        uses: actions/checkout@v4
+        with:
+          ref: 'publish'
+
+      - name: Add a commit (only if there are changes)
+        run: |
+          git rm atom.xml cache.json *feed.xml || true
+          git stash apply
+          git add -f atom.xml cache.json *feed.xml
+          git commit -m "Update atom.xml, cache.json, and Feeds" || true
+          git log
+
+      - name: Push new commit
+        if: ${{ !github.event.act }}
+        run: |
+          git push origin publish
