@@ -22,7 +22,7 @@ dependencies = [
     "pygithub>=2.6.1",
     "streamlink>=7.5.0",
     "psutil>=7.0.0",
-    "deno>=2.7.7",
+    "deno>=2.7.12",
 ]
 
 [dependency-groups]
