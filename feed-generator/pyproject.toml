@@ -20,7 +20,7 @@ dependencies = [
     "matplotlib>=3.10.3",
     "twitchapi>=4.5.0",
     "pygithub>=2.6.1",
-    "streamlink>=7.5.0",
+    "streamlink>=8.3.0",
     "psutil>=7.0.0",
     "deno>=2.7.7",
 ]
