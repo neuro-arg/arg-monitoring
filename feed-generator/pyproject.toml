@@ -21,7 +21,7 @@ dependencies = [
     "twitchapi>=4.5.0",
     "pygithub>=2.6.1",
     "streamlink>=7.5.0",
-    "psutil>=7.0.0",
+    "psutil>=7.2.2",
     "deno>=2.7.7",
 ]
 
