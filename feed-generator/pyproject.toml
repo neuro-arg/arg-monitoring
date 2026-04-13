@@ -10,7 +10,7 @@ requires-python = ">=3.10,<3.13"
 dependencies = [
     "requests>=2.32.4",
     "dataclasses-json>=0.6.7",
-    "beautifulsoup4>=4.13.4",
+    "beautifulsoup4>=4.14.3",
     "feedgen>=1.0.0",
     "yt-dlp[default]>=2026.3.17",
     "pillow>=11.3.0",
