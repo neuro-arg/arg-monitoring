@@ -5,7 +5,6 @@ description = "Monitors the ARG and stuff"
 authors = [
   { name = "clueless author", email = "clueless@clueless.org" }
 ]
-readme = "../README.md"
 requires-python = ">=3.10,<3.13"
 dependencies = [
     "requests>=2.32.4",
